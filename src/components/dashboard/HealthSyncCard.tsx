@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Footprints, Flame, Heart, RefreshCw, CheckCircle2, ShieldAlert, Zap, AlertTriangle, X } from 'lucide-react';
+import { Activity, Footprints, Flame, Heart, RefreshCw, CheckCircle2, ShieldAlert, Zap, AlertTriangle, X, Copy, Check, ExternalLink } from 'lucide-react';
 import { HealthMetrics, getSimulatedHealthData } from '@/lib/services/googleFitService';
 
 interface HealthSyncCardProps {
@@ -27,6 +27,8 @@ export function HealthSyncCard({
 }: HealthSyncCardProps) {
   const [syncing, setSyncing] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -37,6 +39,16 @@ export function HealthSyncCard({
       }
     }
   }, []);
+
+  const redirectUri = typeof window !== 'undefined'
+    ? `${window.location.origin}/api/auth/google-fit/callback`
+    : 'http://localhost:3000/api/auth/google-fit/callback';
+
+  const copyRedirectUri = () => {
+    navigator.clipboard.writeText(redirectUri);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const steps = metrics.steps || 0;
   const targetSteps = metrics.targetSteps || 10000;
@@ -60,6 +72,7 @@ export function HealthSyncCard({
     if (onSimulateSync) {
       onSimulateSync(simData);
     }
+    setShowModal(false);
   };
 
   return (
@@ -105,12 +118,12 @@ export function HealthSyncCard({
 
           {/* Connect / Refresh Button */}
           {!isSynced ? (
-            <a
-              href="/api/auth/google-fit"
-              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md shadow-orange-500/20 active:scale-95 flex items-center gap-1.5"
+            <button
+              onClick={() => setShowModal(true)}
+              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md shadow-orange-500/20 active:scale-95 flex items-center gap-1.5 cursor-pointer"
             >
               CONNECT FIT
-            </a>
+            </button>
           ) : (
             <button
               onClick={handleRefreshClick}
@@ -209,6 +222,68 @@ export function HealthSyncCard({
         <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 pt-1 border-t border-slate-800/60">
           <span>SOURCE: {metrics.source === 'google_fit' ? 'GOOGLE FIT REST API' : 'GOOGLE FIT SIMULATOR'}</span>
           <span>LAST SYNCED: {metrics.lastSyncedAt}</span>
+        </div>
+      )}
+
+      {/* Google Fit Setup & OAuth Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5 relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-200 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                <Activity className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-display font-extrabold text-slate-100 text-lg">CONNECT GOOGLE FIT</h3>
+                <p className="text-xs text-slate-400 font-medium">Sync live step counts, active burn & heart rate</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-3">
+              <div className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+                Google Cloud Console OAuth Setup:
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                If you encounter <code className="text-amber-400 font-mono">redirect_uri_mismatch</code>, ensure this exact URL is added under <span className="text-slate-200 font-semibold">Authorized redirect URIs</span> in your Google Cloud Console OAuth Client settings:
+              </p>
+
+              <div className="flex items-center gap-2 bg-slate-900 p-2.5 rounded-xl border border-slate-800 font-mono text-[11px] text-orange-300 overflow-x-auto">
+                <span className="flex-1 truncate">{redirectUri}</span>
+                <button
+                  onClick={copyRedirectUri}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 shrink-0"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copied ? 'COPIED' : 'COPY'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <a
+                href="/api/auth/google-fit"
+                className="w-full sm:w-auto flex-1 py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md shadow-orange-500/20 active:scale-95 flex items-center justify-center gap-2"
+              >
+                <span>AUTHENTICATE WITH GOOGLE</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+
+              <button
+                onClick={handleSimulateClick}
+                className="w-full sm:w-auto py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-xs font-mono font-medium flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+              >
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span>USE SIMULATED SENSOR</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
