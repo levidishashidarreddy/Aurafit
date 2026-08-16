@@ -30,6 +30,13 @@ export default function LoginPage() {
     }
   };
 
+  const handleGuestContinue = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('aura_guest_session', 'true');
+    }
+    router.push('/');
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -49,6 +56,7 @@ export default function LoginPage() {
           setErrorMsg(error.message);
         } else {
           setSuccessMsg('Check your email for confirmation link!');
+          setTimeout(() => router.push('/'), 1200);
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -58,7 +66,7 @@ export default function LoginPage() {
         if (error) {
           setErrorMsg(error.message);
         } else {
-          router.push('/dashboard');
+          router.push('/');
         }
       }
     } catch (err: any) {
@@ -85,6 +93,15 @@ export default function LoginPage() {
           </h1>
           <p className="text-xs text-slate-400 font-medium">Private Personal Gym & Fitness Platform</p>
         </div>
+
+        {/* Quick Access / Continue to App */}
+        <button
+          onClick={handleGuestContinue}
+          className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-emerald-500/20 active:scale-95 uppercase tracking-wider"
+        >
+          <span>CONTINUE TO GYM HUB</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
 
         {/* Google OAuth Button */}
         <button

@@ -87,9 +87,13 @@ export default function DashboardPage() {
             setIsOnboardingCompleted(false);
           }
         } else {
-          // If user is not authenticated, redirect directly to Login screen
-          router.push('/login');
-          return;
+          // Allow guest/demo user into onboarding or clean dashboard without redirect loop
+          const storedGuest = typeof window !== 'undefined' && localStorage.getItem('aura_user_profile');
+          if (storedGuest) {
+            try {
+              setUserProfile(JSON.parse(storedGuest));
+            } catch (e) {}
+          }
         }
 
         // Try syncing Health Metrics via API if connected
