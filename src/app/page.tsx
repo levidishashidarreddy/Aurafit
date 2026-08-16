@@ -1,69 +1,232 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { AppShell } from '@/components/layout/AppShell';
+import { MacroCards } from '@/components/dashboard/MacroCards';
+import { WaterWidget } from '@/components/dashboard/WaterWidget';
+import { TodayWorkoutCard } from '@/components/dashboard/TodayWorkoutCard';
+import { WeightChartCard } from '@/components/dashboard/WeightChartCard';
+import { HealthSyncCard } from '@/components/dashboard/HealthSyncCard';
+import { AIInsightCard } from '@/components/dashboard/AIInsightCard';
+import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard';
+import { createClient } from '@/lib/supabase/client';
+import { getUserProfile, updateProfile } from '@/lib/services/profileService';
+import { fetchDailyFoodLogs } from '@/lib/services/foodLogService';
+import { fetchWeightLogs } from '@/lib/services/weightService';
+import { HealthMetrics, getSimulatedHealthData } from '@/lib/services/googleFitService';
+import { Utensils, Dumbbell, Scale, Bot, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+
+export default function DashboardPage() {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<any>(null);
+  const [isOnboardingCompleted, setIsOnboardingCompleted] = useState<boolean>(true);
+  const [userProfile, setUserProfile] = useState<any>({
+    full_name: 'Alex',
+    fitness_goal: 'muscle_gain',
+    target_calories: 2200,
+    target_protein_g: 140,
+    target_carbs_g: 240,
+    target_fat_g: 65,
+    target_water_ml: 3500,
+    streak_count: 12,
+  });
+
+  const [dailyTotals, setDailyTotals] = useState({
+    calories: 1850,
+    protein: 118,
+    carbs: 195,
+    fat: 56,
+  });
+
+  const [weightHistory, setWeightHistory] = useState<any[]>([
+    { date: 'Aug 1', weight: 70.2 },
+    { date: 'Aug 4', weight: 70.8 },
+    { date: 'Aug 7', weight: 71.3 },
+    { date: 'Aug 10', weight: 71.9 },
+    { date: 'Aug 13', weight: 72.4 },
+  ]);
+
+  const [healthMetrics, setHealthMetrics] = useState<HealthMetrics>({
+    steps: 7800,
+    targetSteps: 10000,
+    activeCalories: 450,
+    distanceKm: 5.4,
+    heartRateBpm: 72,
+    isSynced: false,
+    source: 'simulated',
+  });
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function loadLiveData() {
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser) {
+          setUser(currentUser);
+          const profile = await getUserProfile(currentUser.id);
+          if (profile) {
+            setUserProfile(profile);
+            setIsOnboardingCompleted(profile.onboarding_completed);
+
+            const logs = await fetchDailyFoodLogs(currentUser.id);
+            if (logs && logs.length > 0) {
+              const cals = logs.reduce((acc, i) => acc + i.calories, 0);
+              const prot = logs.reduce((acc, i) => acc + Number(i.protein_g), 0);
+              const carbs = logs.reduce((acc, i) => acc + Number(i.carbs_g), 0);
+              const fat = logs.reduce((acc, i) => acc + Number(i.fat_g), 0);
+              setDailyTotals({ calories: cals, protein: Math.round(prot), carbs: Math.round(carbs), fat: Math.round(fat) });
+            }
+
+            const weights = await fetchWeightLogs(currentUser.id);
+            if (weights && weights.length > 0) {
+              const formatted = weights.map((w) => ({
+                date: new Date(w.logged_at).toLocaleDateString([], { month: 'short', day: 'numeric' }),
+                weight: Number(w.weight_kg),
+              }));
+              setWeightHistory(formatted);
+            }
+          }
+        }
+
+        // Try syncing Health Metrics via API if connected
+        await fetchHealthMetrics();
+      } catch (err) {
+        console.error('Supabase live data fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadLiveData();
+  }, []);
+
+  const fetchHealthMetrics = async () => {
+    try {
+      const res = await fetch('/api/health/sync');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.metrics) {
+          setHealthMetrics(data.metrics);
+        }
+      }
+    } catch (e) {
+      console.warn('Health metrics sync skipped:', e);
+    }
+  };
+
+  const handleSimulateSync = (simulatedData: HealthMetrics) => {
+    setHealthMetrics(simulatedData);
+  };
+
+  const handleOnboardingComplete = async (formData: any) => {
+    setUserProfile(formData);
+    setIsOnboardingCompleted(true);
+    if (user) {
+      await updateProfile(user.id, formData);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <span className="font-display text-xs font-semibold tracking-widest uppercase">CONNECTING TO GYM HUB...</span>
+      </div>
+    );
+  }
+
+  if (!isOnboardingCompleted) {
+    return <OnboardingWizard onComplete={handleOnboardingComplete} />;
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <AppShell headerTitle="TODAY'S PERFORMANCE">
+      {/* Quick Action Pills Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <Link
+          href="/nutrition"
+          className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-orange-500/50 flex items-center gap-3 transition-all cursor-pointer group"
+        >
+          <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 group-hover:scale-110 transition-transform">
+            <Utensils className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-display font-bold text-slate-100 text-sm tracking-wider uppercase">LOG FUEL</div>
+            <div className="font-mono text-[10px] text-slate-400">MEALS & MACROS</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/workout"
+          className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-orange-500/50 flex items-center gap-3 transition-all cursor-pointer group"
+        >
+          <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 group-hover:scale-110 transition-transform">
+            <Dumbbell className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-display font-bold text-slate-100 text-sm tracking-wider uppercase">START SESSION</div>
+            <div className="font-mono text-[10px] text-slate-400">PUSH / PULL / LEGS</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/progress"
+          className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-orange-500/50 flex items-center gap-3 transition-all cursor-pointer group"
+        >
+          <div className="p-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700/60 group-hover:scale-110 transition-transform">
+            <Scale className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-display font-bold text-slate-100 text-sm tracking-wider uppercase">RECORD WEIGH-IN</div>
+            <div className="font-mono text-[10px] text-slate-400">BODYWEIGHT</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/ai-coach"
+          className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-indigo-500/50 flex items-center gap-3 transition-all cursor-pointer group"
+        >
+          <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition-transform">
+            <Bot className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-display font-bold text-slate-100 text-sm tracking-wider uppercase">ASK COACH</div>
+            <div className="font-mono text-[10px] text-slate-400">TRAINING INTELLIGENCE</div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Daily Macros Section */}
+      <MacroCards
+        caloriesConsumed={dailyTotals.calories}
+        caloriesTarget={userProfile.target_calories || 2200}
+        proteinConsumed={dailyTotals.protein}
+        proteinTarget={userProfile.target_protein_g || 140}
+        carbsConsumed={dailyTotals.carbs}
+        carbsTarget={userProfile.target_carbs_g || 240}
+        fatConsumed={dailyTotals.fat}
+        fatTarget={userProfile.target_fat_g || 65}
+      />
+
+      {/* Main Grid: Today's Workout & AI Insight */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <TodayWorkoutCard />
+          <WeightChartCard data={weightHistory} currentWeightKg={userProfile.current_weight_kg || 72.4} goalWeightKg={userProfile.goal_weight_kg || 76.0} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="space-y-6">
+          <AIInsightCard />
+          <WaterWidget targetWaterMl={userProfile.target_water_ml || 3500} />
+          <HealthSyncCard
+            metrics={healthMetrics}
+            onSyncRefresh={fetchHealthMetrics}
+            onSimulateSync={handleSimulateSync}
+          />
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }
