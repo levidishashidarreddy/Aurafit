@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Activity, Footprints, Flame, Heart, RefreshCw, CheckCircle2, ShieldAlert, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Activity, Footprints, Flame, Heart, RefreshCw, CheckCircle2, ShieldAlert, Zap, AlertTriangle, X } from 'lucide-react';
 import { HealthMetrics, getSimulatedHealthData } from '@/lib/services/googleFitService';
 
 interface HealthSyncCardProps {
@@ -13,11 +13,11 @@ interface HealthSyncCardProps {
 
 export function HealthSyncCard({
   metrics = {
-    steps: 7800,
+    steps: 0,
     targetSteps: 10000,
-    activeCalories: 450,
-    distanceKm: 5.4,
-    heartRateBpm: 72,
+    activeCalories: 0,
+    distanceKm: 0,
+    heartRateBpm: 0,
     isSynced: false,
     source: 'simulated',
   },
@@ -26,12 +26,23 @@ export function HealthSyncCard({
   isLoading = false,
 }: HealthSyncCardProps) {
   const [syncing, setSyncing] = useState(false);
+  const [oauthError, setOauthError] = useState<string | null>(null);
 
-  const steps = metrics.steps || 7800;
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get('fit_error');
+      if (err) {
+        setOauthError(decodeURIComponent(err));
+      }
+    }
+  }, []);
+
+  const steps = metrics.steps || 0;
   const targetSteps = metrics.targetSteps || 10000;
-  const activeCalories = metrics.activeCalories || 450;
-  const distanceKm = metrics.distanceKm || 5.4;
-  const heartRateBpm = metrics.heartRateBpm || 72;
+  const activeCalories = metrics.activeCalories || 0;
+  const distanceKm = metrics.distanceKm || 0;
+  const heartRateBpm = metrics.heartRateBpm || 0;
   const isSynced = metrics.isSynced;
 
   const stepsPercent = Math.min(100, Math.round((steps / (targetSteps || 1)) * 100));
@@ -112,6 +123,27 @@ export function HealthSyncCard({
           )}
         </div>
       </div>
+
+      {/* OAuth Error Alert Banner */}
+      {oauthError && (
+        <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs space-y-1 relative">
+          <button
+            onClick={() => setOauthError(null)}
+            className="absolute top-2.5 right-2.5 text-amber-400 hover:text-amber-200 cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+          <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-[11px] text-amber-400">
+            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <span>Google OAuth Redirect URI Config Note</span>
+          </div>
+          <p className="text-[11px] text-amber-200/90 leading-relaxed">
+            {oauthError.includes('redirect_uri_mismatch')
+              ? 'Google Cloud Console OAuth redirect URI must match your current URL domain (e.g. http://localhost:3000/api/auth/google-fit/callback or your Vercel URL). In the meantime, use the SIMULATE STEPS button below to test live step tracking.'
+              : oauthError}
+          </p>
+        </div>
+      )}
 
       {/* Progress Bar */}
       <div className="space-y-1.5">

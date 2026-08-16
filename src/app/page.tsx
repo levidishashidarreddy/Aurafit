@@ -16,43 +16,39 @@ import { fetchWeightLogs } from '@/lib/services/weightService';
 import { HealthMetrics, getSimulatedHealthData } from '@/lib/services/googleFitService';
 import { Utensils, Dumbbell, Scale, Bot, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<any>(null);
   const [isOnboardingCompleted, setIsOnboardingCompleted] = useState<boolean>(true);
   const [userProfile, setUserProfile] = useState<any>({
-    full_name: 'Alex',
+    full_name: '',
     fitness_goal: 'muscle_gain',
     target_calories: 2200,
     target_protein_g: 140,
     target_carbs_g: 240,
     target_fat_g: 65,
     target_water_ml: 3500,
-    streak_count: 12,
+    streak_count: 1,
   });
 
   const [dailyTotals, setDailyTotals] = useState({
-    calories: 1850,
-    protein: 118,
-    carbs: 195,
-    fat: 56,
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
   });
 
-  const [weightHistory, setWeightHistory] = useState<any[]>([
-    { date: 'Aug 1', weight: 70.2 },
-    { date: 'Aug 4', weight: 70.8 },
-    { date: 'Aug 7', weight: 71.3 },
-    { date: 'Aug 10', weight: 71.9 },
-    { date: 'Aug 13', weight: 72.4 },
-  ]);
+  const [weightHistory, setWeightHistory] = useState<any[]>([]);
 
   const [healthMetrics, setHealthMetrics] = useState<HealthMetrics>({
-    steps: 7800,
+    steps: 0,
     targetSteps: 10000,
-    activeCalories: 450,
-    distanceKm: 5.4,
-    heartRateBpm: 72,
+    activeCalories: 0,
+    distanceKm: 0,
+    heartRateBpm: 0,
     isSynced: false,
     source: 'simulated',
   });
@@ -68,7 +64,7 @@ export default function DashboardPage() {
           const profile = await getUserProfile(currentUser.id);
           if (profile) {
             setUserProfile(profile);
-            setIsOnboardingCompleted(profile.onboarding_completed);
+            setIsOnboardingCompleted(profile.onboarding_completed ?? false);
 
             const logs = await fetchDailyFoodLogs(currentUser.id);
             if (logs && logs.length > 0) {
@@ -87,7 +83,13 @@ export default function DashboardPage() {
               }));
               setWeightHistory(formatted);
             }
+          } else {
+            setIsOnboardingCompleted(false);
           }
+        } else {
+          // If user is not authenticated, redirect directly to Login screen
+          router.push('/login');
+          return;
         }
 
         // Try syncing Health Metrics via API if connected
@@ -100,7 +102,7 @@ export default function DashboardPage() {
     }
 
     loadLiveData();
-  }, []);
+  }, [router]);
 
   const fetchHealthMetrics = async () => {
     try {
