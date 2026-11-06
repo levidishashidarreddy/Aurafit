@@ -19,33 +19,73 @@ export interface Profile {
   tdee?: number;
   target_calories?: number;
   target_protein_g?: number;
+  target_protein_min?: number;
+  target_protein_max?: number;
   target_carbs_g?: number;
   target_fat_g?: number;
-  target_water_ml: number;
+  target_fibre_g?: number;
+  target_fibre_min?: number;
+  target_fibre_max?: number;
   target_steps: number;
+  weekly_training_days?: number;
   streak_count: number;
   onboarding_completed: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface Food {
+export interface NutritionEntry {
   id: string;
-  name: string;
-  brand?: string;
-  barcode?: string;
-  serving_size: number;
-  serving_unit: string;
+  user_id: string;
+  entry_date: string; // YYYY-MM-DD
+  meal_type: MealType;
+  food_name: string;
+  quantity?: string;
   calories: number;
   protein_g: number;
-  carbs_g: number;
-  fat_g: number;
-  fiber_g?: number;
-  sugar_g?: number;
-  sodium_mg?: number;
-  is_custom: boolean;
-  created_by?: string;
+  carbohydrates_g: number;
+  total_fat_g: number;
+  fibre_g?: number | null;
+  total_sugars_g?: number | null;
+  added_sugar_g?: number | null;
+  saturated_fat_g?: number | null;
+  notes?: string | null;
   created_at: string;
+  updated_at: string;
+}
+
+export interface DailyNutritionSummary {
+  id: string;
+  user_id: string;
+  entry_date: string; // YYYY-MM-DD
+  calories_kcal: number | null;
+  protein_g: number | null;
+  carbohydrates_g: number | null;
+  total_fat_g: number | null;
+  fibre_g: number | null;
+  total_sugars_g: number | null;
+  added_sugar_g: number | null;
+  saturated_fat_g: number | null;
+  raw_pasted_text?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export type ActivityType = 'Walking' | 'Treadmill' | 'Running';
+
+export interface ActivityEntry {
+  id: string;
+  user_id: string;
+  activity_date: string; // YYYY-MM-DD
+  activity_type: ActivityType;
+  steps: number;
+  calories_burned: number;
+  duration_minutes?: number | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FoodLog {
@@ -172,3 +212,82 @@ export interface AIInteraction {
   response_content: any;
   created_at: string;
 }
+
+export interface WorkoutAnalysis {
+  id: string;
+  user_id: string;
+  session_id: string;
+  rating: number; // e.g. 8.5 out of 10
+  rating_explanation: string;
+  progress_summary: string;
+  improvements: string[];
+  stagnations: string[];
+  fatigue_cautions?: string | null;
+  next_session_tips?: string | null;
+  data_limitations?: string | null;
+  model_metadata?: string | null;
+  created_at: string;
+}
+
+export type ActivityEntryMode = 'daily_summary' | 'individual_activities';
+
+export interface DailyActivitySummary {
+  id: string;
+  user_id: string;
+  entry_date: string; // YYYY-MM-DD
+  total_steps: number;
+  active_calories_burned: number; // manually entered, not estimated
+  entry_mode: ActivityEntryMode;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type WorkoutDayStatus = 'planned' | 'completed' | 'missed' | 'rescheduled' | 'rest';
+
+export interface PlannedWorkoutExercise {
+  id: string;
+  planned_day_id: string;
+  exercise_id?: string;
+  exercise_name: string;
+  muscle_group: string;
+  order_index: number;
+  planned_sets: number;
+  target_reps: string; // e.g. "8-12" or "10"
+  target_weight_kg?: number | null;
+  target_rest_seconds?: number | null;
+  notes?: string | null;
+  created_at: string;
+}
+
+export interface PlannedWorkoutDay {
+  id: string;
+  plan_id: string;
+  user_id: string;
+  scheduled_date: string; // YYYY-MM-DD
+  original_date: string; // YYYY-MM-DD
+  day_of_week: number; // 0=Mon, 6=Sun
+  title: string;
+  is_rest_day: boolean;
+  status: WorkoutDayStatus;
+  rescheduled_to_date?: string | null;
+  completed_session_id?: string | null;
+  order_index: number;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  exercises?: PlannedWorkoutExercise[];
+}
+
+export interface WeeklyWorkoutPlan {
+  id: string;
+  user_id: string;
+  week_start_date: string; // YYYY-MM-DD (Monday)
+  title?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  days?: PlannedWorkoutDay[];
+}
+
+

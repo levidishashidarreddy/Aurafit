@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Utensils, Dumbbell, Scale, Bot } from 'lucide-react';
+import { X, Utensils, Dumbbell, Scale, Footprints } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface QuickActionModalProps {
@@ -16,11 +16,11 @@ export function QuickActionModal({ isOpen, onClose }: QuickActionModalProps) {
   const actions = [
     {
       id: 'food',
-      title: 'Log Food / Meal',
-      description: 'Search foods or quick-add macros',
+      title: 'Paste Daily Nutrition Summary',
+      description: 'Paste whole-day nutrition totals from ChatGPT',
       icon: Utensils,
-      color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/30',
-      href: '/nutrition?action=log',
+      color: 'from-orange-500/20 to-amber-500/20 text-orange-400 border-orange-500/30',
+      href: '/nutrition',
     },
     {
       id: 'workout',
@@ -31,20 +31,20 @@ export function QuickActionModal({ isOpen, onClose }: QuickActionModalProps) {
       href: '/workout?action=start',
     },
     {
+      id: 'activity',
+      title: 'Record Steps & Activity',
+      description: 'Manual steps and calories burned',
+      icon: Footprints,
+      color: 'from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/30',
+      href: '/activity',
+    },
+    {
       id: 'weight',
       title: 'Add Body Weight',
       description: 'Record today\'s weigh-in',
       icon: Scale,
-      color: 'from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30',
+      color: 'from-slate-700/30 to-slate-800/30 text-slate-300 border-slate-700/40',
       href: '/progress?action=weight',
-    },
-    {
-      id: 'ai',
-      title: 'Ask AI Coach',
-      description: 'Get custom meal & workout advice',
-      icon: Bot,
-      color: 'from-purple-500/20 to-indigo-500/20 text-purple-400 border-purple-500/30',
-      href: '/ai-coach',
     },
   ];
 

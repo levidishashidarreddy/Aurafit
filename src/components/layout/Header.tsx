@@ -1,6 +1,7 @@
 'use client';
 
-import { Flame, Dumbbell } from 'lucide-react';
+import { Flame, Dumbbell, Settings, User } from 'lucide-react';
+import Link from 'next/link';
 
 interface HeaderProps {
   title?: string;
@@ -8,7 +9,7 @@ interface HeaderProps {
   streakCount?: number;
 }
 
-export function Header({ title, userGoal = 'MUSCLE GAIN MODE', streakCount = 12 }: HeaderProps) {
+export function Header({ title, userGoal = 'PERFORMANCE MODE', streakCount = 12 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
@@ -29,6 +30,15 @@ export function Header({ title, userGoal = 'MUSCLE GAIN MODE', streakCount = 12 
           <Flame className="w-4 h-4 fill-orange-400/20" />
           <span>🔥 {streakCount} DAYS ACTIVE</span>
         </div>
+
+        {/* Clear Settings / Profile Destination */}
+        <Link
+          href="/profile"
+          className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-orange-400 border border-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+          title="Profile & Target Settings"
+        >
+          <Settings className="w-4 h-4" />
+        </Link>
       </div>
     </header>
   );

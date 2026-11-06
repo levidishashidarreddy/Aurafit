@@ -2,6 +2,7 @@ import { createClient } from '../supabase/client';
 import { Profile } from '../types/database';
 
 export async function getUserProfile(userId: string): Promise<Profile | null> {
+  if (!userId || userId === 'guest' || userId === 'demo') return null;
   const supabase = createClient();
   const { data, error } = await supabase
     .from('profiles')
@@ -17,6 +18,7 @@ export async function getUserProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function updateProfile(userId: string, updates: Partial<Profile>): Promise<Profile | null> {
+  if (!userId || userId === 'guest' || userId === 'demo') return null;
   const supabase = createClient();
   const { data, error } = await supabase
     .from('profiles')

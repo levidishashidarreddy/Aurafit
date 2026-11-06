@@ -238,8 +238,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 <span className="font-bold text-purple-400">{computedTargets.target_fat_g}g</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Daily Water Target:</span>
-                <span className="font-bold text-cyan-300">{(computedTargets.target_water_ml / 1000).toFixed(1)} L</span>
+                <span className="text-slate-400">Daily Step Target:</span>
+                <span className="font-bold text-emerald-400">10,000 steps</span>
               </div>
             </div>
           </div>

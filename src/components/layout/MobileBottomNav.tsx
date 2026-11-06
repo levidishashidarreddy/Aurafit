@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Activity, 
-  Utensils, 
-  Dumbbell, 
-  TrendingUp, 
-  Bot, 
-  User
+import {
+  LayoutDashboard,
+  Dumbbell,
+  Utensils,
+  Footprints,
+  TrendingUp,
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
@@ -19,12 +18,11 @@ export function MobileBottomNav({ onQuickAction }: MobileBottomNavProps) {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'HOME', href: '/dashboard', icon: Activity },
-    { label: 'FUEL', href: '/nutrition', icon: Utensils },
-    { label: 'TRAIN', href: '/workout', icon: Dumbbell },
+    { label: 'HOME', href: '/', icon: LayoutDashboard },
+    { label: 'WORKOUT', href: '/workout', icon: Dumbbell },
+    { label: 'NUTRITION', href: '/nutrition', icon: Utensils },
+    { label: 'ACTIVITY', href: '/activity', icon: Footprints },
     { label: 'PROGRESS', href: '/progress', icon: TrendingUp },
-    { label: 'COACH', href: '/ai-coach', icon: Bot },
-    { label: 'ATHLETE', href: '/profile', icon: User },
   ];
 
   return (
@@ -32,7 +30,9 @@ export function MobileBottomNav({ onQuickAction }: MobileBottomNavProps) {
       <div className="flex items-center justify-around max-w-md mx-auto relative">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+          const isActive = item.href === '/'
+            ? (pathname === '/' || pathname === '/dashboard')
+            : pathname?.startsWith(item.href);
 
           return (
             <Link
@@ -42,8 +42,8 @@ export function MobileBottomNav({ onQuickAction }: MobileBottomNavProps) {
                 isActive ? 'text-orange-400 font-bold' : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Icon className={`w-5 h-5 mb-0.5 ${isActive ? 'text-orange-400 stroke-[2.5]' : ''}`} />
-              <span className="font-display text-[9px] tracking-wider uppercase">{item.label}</span>
+              <Icon className="w-5 h-5 mb-0.5" />
+              <span className="text-[10px] font-display tracking-wider">{item.label}</span>
             </Link>
           );
         })}

@@ -14,14 +14,14 @@ interface MacroCardsProps {
 }
 
 export function MacroCards({
-  caloriesConsumed = 1850,
-  caloriesTarget = 2200,
-  proteinConsumed = 118,
-  proteinTarget = 140,
-  carbsConsumed = 190,
-  carbsTarget = 240,
-  fatConsumed = 55,
-  fatTarget = 65,
+  caloriesConsumed = 0,
+  caloriesTarget = 1900,
+  proteinConsumed = 0,
+  proteinTarget = 85,
+  carbsConsumed = 0,
+  carbsTarget = 210,
+  fatConsumed = 0,
+  fatTarget = 60,
 }: MacroCardsProps) {
   const calPercent = Math.min(100, Math.round((caloriesConsumed / (caloriesTarget || 1)) * 100));
   const protPercent = Math.min(100, Math.round((proteinConsumed / (proteinTarget || 1)) * 100));

@@ -316,3 +316,187 @@ INSERT INTO public.foods (name, brand, calories, protein_g, carbs_g, fat_g, serv
 ('Salmon Fillet (Cooked)', 'Generic', 206, 22.0, 0.0, 12.0, 100, 'g'),
 ('Soya Chunks (Raw)', 'Generic', 345, 52.0, 33.0, 0.5, 100, 'g')
 ON CONFLICT DO NOTHING;
+
+-- 12. MANUAL NUTRITION TRACKING TABLE
+CREATE TABLE IF NOT EXISTS public.nutrition_entries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  entry_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  meal_type meal_type NOT NULL,
+  food_name TEXT NOT NULL,
+  quantity TEXT,
+  calories INT NOT NULL CHECK (calories >= 0),
+  protein_g NUMERIC(6,2) NOT NULL CHECK (protein_g >= 0),
+  carbohydrates_g NUMERIC(6,2) NOT NULL CHECK (carbohydrates_g >= 0),
+  total_fat_g NUMERIC(6,2) NOT NULL CHECK (total_fat_g >= 0),
+  fibre_g NUMERIC(6,2) CHECK (fibre_g >= 0),
+  total_sugars_g NUMERIC(6,2) CHECK (total_sugars_g >= 0),
+  added_sugar_g NUMERIC(6,2) CHECK (added_sugar_g >= 0),
+  saturated_fat_g NUMERIC(6,2) CHECK (saturated_fat_g >= 0),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_nutrition_user_date ON public.nutrition_entries(user_id, entry_date);
+ALTER TABLE public.nutrition_entries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own nutrition entries" ON public.nutrition_entries
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 13. MANUAL ACTIVITY & STEPS TRACKING TABLE
+CREATE TABLE IF NOT EXISTS public.activity_entries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  activity_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  activity_type TEXT NOT NULL CHECK (activity_type IN ('Walking', 'Treadmill', 'Running')),
+  steps INT NOT NULL CHECK (steps >= 0),
+  calories_burned INT NOT NULL CHECK (calories_burned >= 0),
+  duration_minutes INT CHECK (duration_minutes >= 0),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_activity_user_date ON public.activity_entries(user_id, activity_date);
+ALTER TABLE public.activity_entries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own activity entries" ON public.activity_entries
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 14. WORKOUT ANALYSES (AI ASSESSMENTS & RATINGS)
+CREATE TABLE IF NOT EXISTS public.workout_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  session_id UUID NOT NULL REFERENCES public.workout_sessions(id) ON DELETE CASCADE,
+  rating NUMERIC(3,1) NOT NULL CHECK (rating >= 0 AND rating <= 10),
+  rating_explanation TEXT NOT NULL,
+  progress_summary TEXT NOT NULL,
+  improvements JSONB DEFAULT '[]'::jsonb,
+  stagnations JSONB DEFAULT '[]'::jsonb,
+  fatigue_cautions TEXT,
+  next_session_tips TEXT,
+  data_limitations TEXT,
+  model_metadata TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_workout_analyses_user ON public.workout_analyses(user_id);
+CREATE INDEX IF NOT EXISTS idx_workout_analyses_session ON public.workout_analyses(session_id);
+ALTER TABLE public.workout_analyses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own workout analyses" ON public.workout_analyses
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 15. DAILY NUTRITION SUMMARIES (PASTED WHOLE-DAY TOTALS)
+CREATE TABLE IF NOT EXISTS public.daily_nutrition_summaries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  entry_date DATE NOT NULL,
+  calories_kcal INT CHECK (calories_kcal >= 0),
+  protein_g NUMERIC(6,2) CHECK (protein_g >= 0),
+  carbohydrates_g NUMERIC(6,2) CHECK (carbohydrates_g >= 0),
+  total_fat_g NUMERIC(6,2) CHECK (total_fat_g >= 0),
+  fibre_g NUMERIC(6,2) CHECK (fibre_g >= 0),
+  total_sugars_g NUMERIC(6,2) CHECK (total_sugars_g >= 0),
+  added_sugar_g NUMERIC(6,2) CHECK (added_sugar_g >= 0),
+  saturated_fat_g NUMERIC(6,2) CHECK (saturated_fat_g >= 0),
+  raw_pasted_text TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_user_entry_date UNIQUE (user_id, entry_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_daily_nutrition_user_date ON public.daily_nutrition_summaries(user_id, entry_date);
+
+ALTER TABLE public.daily_nutrition_summaries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own daily nutrition summaries" ON public.daily_nutrition_summaries
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 16. DAILY ACTIVITY SUMMARIES (ONE ENTRY PER DAY BY DEFAULT)
+CREATE TABLE IF NOT EXISTS public.daily_activity_summaries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  entry_date DATE NOT NULL,
+  total_steps INT NOT NULL DEFAULT 0 CHECK (total_steps >= 0),
+  active_calories_burned INT NOT NULL DEFAULT 0 CHECK (active_calories_burned >= 0),
+  entry_mode TEXT NOT NULL DEFAULT 'daily_summary' CHECK (entry_mode IN ('daily_summary', 'individual_activities')),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_user_activity_date UNIQUE (user_id, entry_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_daily_activity_user_date ON public.daily_activity_summaries(user_id, entry_date);
+ALTER TABLE public.daily_activity_summaries ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own daily activity summaries" ON public.daily_activity_summaries
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 17. WEEKLY WORKOUT PLANS
+CREATE TABLE IF NOT EXISTS public.weekly_workout_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  week_start_date DATE NOT NULL,
+  title TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_user_week UNIQUE (user_id, week_start_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_weekly_plans_user_week ON public.weekly_workout_plans(user_id, week_start_date);
+ALTER TABLE public.weekly_workout_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own weekly plans" ON public.weekly_workout_plans
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 18. PLANNED WORKOUT DAYS
+CREATE TABLE IF NOT EXISTS public.planned_workout_days (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  plan_id UUID NOT NULL REFERENCES public.weekly_workout_plans(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  scheduled_date DATE NOT NULL,
+  original_date DATE NOT NULL,
+  day_of_week INT NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
+  title TEXT NOT NULL,
+  is_rest_day BOOLEAN DEFAULT FALSE,
+  status TEXT NOT NULL DEFAULT 'planned' CHECK (status IN ('planned', 'completed', 'missed', 'rescheduled', 'rest')),
+  rescheduled_to_date DATE,
+  completed_session_id UUID REFERENCES public.workout_sessions(id) ON DELETE SET NULL,
+  order_index INT DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT unique_user_scheduled_date UNIQUE (user_id, scheduled_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_planned_days_user_date ON public.planned_workout_days(user_id, scheduled_date);
+ALTER TABLE public.planned_workout_days ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own planned workout days" ON public.planned_workout_days
+  FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- 19. PLANNED WORKOUT EXERCISES
+CREATE TABLE IF NOT EXISTS public.planned_workout_exercises (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  planned_day_id UUID NOT NULL REFERENCES public.planned_workout_days(id) ON DELETE CASCADE,
+  exercise_id UUID REFERENCES public.exercises(id) ON DELETE CASCADE,
+  exercise_name TEXT NOT NULL,
+  muscle_group TEXT NOT NULL,
+  order_index INT NOT NULL DEFAULT 0,
+  planned_sets INT NOT NULL DEFAULT 3,
+  target_reps TEXT NOT NULL DEFAULT '8-12',
+  target_weight_kg NUMERIC(6,2),
+  target_rest_seconds INT DEFAULT 90,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_planned_exercises_day ON public.planned_workout_exercises(planned_day_id);
+ALTER TABLE public.planned_workout_exercises ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users manage own planned exercises" ON public.planned_workout_exercises
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM public.planned_workout_days 
+      WHERE id = planned_day_id AND user_id = auth.uid()
+    )
+  );
+
+
+

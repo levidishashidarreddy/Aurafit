@@ -17,6 +17,8 @@ export interface CalculatedTargets {
   target_protein_g: number;
   target_carbs_g: number;
   target_fat_g: number;
+  target_fibre_g: number;
+  target_steps: number;
   target_water_ml: number;
 }
 
@@ -75,6 +77,8 @@ export function calculateFitnessTargets(input: UserStatsInput): CalculatedTarget
     target_protein_g,
     target_carbs_g,
     target_fat_g,
+    target_fibre_g: 28,
+    target_steps: 10000,
     target_water_ml,
   };
 }
