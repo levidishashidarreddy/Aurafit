@@ -83,6 +83,18 @@ export function calculateFitnessTargets(input: UserStatsInput): CalculatedTarget
   };
 }
 
+export function calculateBMI(weightKg: number, heightCm: number): { bmi: number; category: string } {
+  if (heightCm <= 0 || weightKg <= 0) return { bmi: 0, category: 'Unknown' };
+  const heightM = heightCm / 100;
+  const bmi = Number((weightKg / (heightM * heightM)).toFixed(1));
+  let category = 'Normal';
+  if (bmi < 18.5) category = 'Underweight';
+  else if (bmi < 25) category = 'Normal weight';
+  else if (bmi < 30) category = 'Overweight';
+  else category = 'Obese';
+  return { bmi, category };
+}
+
 export interface PlateResult {
   plateWeightKg: number;
   countPerSide: number;

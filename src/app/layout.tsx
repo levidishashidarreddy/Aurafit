@@ -2,17 +2,18 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'AURA FIT — Private Gym & Fitness Companion',
-  description: 'Mobile-first personal gym workout logger, calorie & macro tracker, progress analytics, and AI fitness assistant.',
+  title: 'GYM HUB — Futuristic Personal Fitness Ecosystem',
+  description: 'AI-driven futuristic gym workout logger, calorie & macro engine, biometrics analytics, and dragon streak gamification.',
   manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0B0F17',
+  themeColor: '#070512',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -22,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-slate-950 text-slate-100 antialiased font-sans min-h-screen">
+      <body className="bg-[#070512] text-[#F6F2FF] antialiased font-sans min-h-screen selection:bg-[#9B5CFF] selection:text-white">
         {children}
       </body>
     </html>

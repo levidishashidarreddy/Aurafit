@@ -491,41 +491,41 @@ export default function WorkoutPage() {
   };
 
   return (
-    <AppShell headerTitle="Workout Planner & Logger">
-      <div className="space-y-6">
+    <AppShell headerTitle="WORKOUT & GYM LOGGER">
+      <div className="space-y-4 sm:space-y-5">
         {/* Stage Toggle Bar */}
-        <div className="p-4 md:p-5 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-orange-950/20 border border-slate-800 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="p-3 sm:p-4 rounded-3xl bg-gradient-to-br from-[#0E1A38] via-[#0B132B] to-[#070C1E] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">
-              <Dumbbell className="w-4 h-4" />
-              <span>Two-Stage Workout System</span>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-[#00D5FF] uppercase tracking-wider mb-0.5">
+              <Dumbbell className="w-3.5 h-3.5 text-[#9B5CFF]" />
+              <span>TRAINING CONSOLE</span>
             </div>
-            <h1 className="text-xl md:text-2xl font-black text-slate-100">
-              {stage === 'planner' ? 'Stage A: Weekly Workout Planner' : 'Stage B: Gym Mode Logger'}
+            <h1 className="text-base sm:text-xl font-display font-extrabold text-white uppercase tracking-wide">
+              {stage === 'planner' ? 'Stage A: Weekly Split Planner' : 'Stage B: Active Gym Mode'}
             </h1>
           </div>
 
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-950 border border-slate-800 self-stretch sm:self-auto justify-end">
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/40 border border-white/8 self-stretch sm:self-auto justify-end">
             <button
               onClick={() => setStage('planner')}
-              className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              className={`flex-1 sm:flex-initial py-2 px-3.5 rounded-xl text-xs font-display font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 uppercase ${
                 stage === 'planner'
-                  ? 'bg-orange-500 text-slate-950 shadow-md shadow-orange-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white shadow-[0_0_15px_rgba(155,92,255,0.35)]'
+                  : 'text-[#A9A1BD] hover:text-white'
               }`}
             >
-              <Calendar className="w-4 h-4" />
-              <span>Weekly Planner</span>
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Planner</span>
             </button>
             <button
               onClick={() => setStage('gym_mode')}
-              className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              className={`flex-1 sm:flex-initial py-2 px-3.5 rounded-xl text-xs font-display font-bold tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5 uppercase ${
                 stage === 'gym_mode'
-                  ? 'bg-orange-500 text-slate-950 shadow-md shadow-orange-500/20'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white shadow-[0_0_15px_rgba(155,92,255,0.35)]'
+                  : 'text-[#A9A1BD] hover:text-white'
               }`}
             >
-              <Play className="w-4 h-4 fill-current" />
+              <Play className="w-3.5 h-3.5 fill-current" />
               <span>Gym Mode</span>
             </button>
           </div>
@@ -535,30 +535,30 @@ export default function WorkoutPage() {
         {/* STAGE A: WEEKLY WORKOUT PLANNER */}
         {/* ============================================================== */}
         {stage === 'planner' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-5">
             {/* Week Selector Bar */}
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
+            <div className="p-3 sm:p-4 rounded-3xl bg-[#100D20]/85 border border-[#9B5CFF]/20 backdrop-blur-xl flex flex-wrap items-center justify-between gap-2.5 shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={handlePrevWeek}
-                  className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white"
+                  className="w-8 h-8 rounded-xl bg-white/5 border border-white/8 text-slate-300 hover:text-white flex items-center justify-center active:scale-95 transition-all"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-100 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-orange-400" />
+                <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/8 text-xs font-mono font-bold text-white flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-[#00D5FF]" />
                   <span>Week of {selectedWeekMonday}</span>
                 </div>
                 <button
                   onClick={handleNextWeek}
-                  className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 hover:text-white"
+                  className="w-8 h-8 rounded-xl bg-white/5 border border-white/8 text-slate-300 hover:text-white flex items-center justify-center active:scale-95 transition-all"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
                 {selectedWeekMonday !== currentWeekMonday && (
                   <button
                     onClick={handleCurrentWeek}
-                    className="py-1 px-2.5 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-bold"
+                    className="py-1 px-2.5 rounded-lg bg-[#9B5CFF]/15 text-[#00D5FF] text-[11px] font-bold border border-[#9B5CFF]/25"
                   >
                     Current Week
                   </button>
@@ -568,24 +568,25 @@ export default function WorkoutPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleDuplicatePreviousWeek}
-                  className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5 border border-slate-700"
+                  className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-display font-bold tracking-wider flex items-center gap-1.5 border border-white/8 transition-all"
                 >
-                  <Copy className="w-3.5 h-3.5 text-orange-400" />
-                  <span>Duplicate Previous Week</span>
+                  <Copy className="w-3.5 h-3.5 text-[#00D5FF]" />
+                  <span className="hidden sm:inline">DUPLICATE PREV</span>
+                  <span className="sm:hidden">COPY</span>
                 </button>
                 <button
                   onClick={handleSaveWeeklyPlan}
                   disabled={isSavingPlan}
-                  className="py-2 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                  className="py-2 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-display font-black tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 transition-all uppercase"
                 >
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>{isSavingPlan ? 'Saving...' : 'Save Plan'}</span>
+                  <span>{isSavingPlan ? 'SAVING...' : 'SAVE PLAN'}</span>
                 </button>
               </div>
             </div>
 
             {planSaveSuccess && (
-              <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-2">
+              <div className="p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 text-xs font-bold flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>Weekly plan saved successfully!</span>
               </div>
@@ -603,22 +604,22 @@ export default function WorkoutPage() {
                   <div
                     key={dName}
                     onClick={() => setSelectedDayIndex(idx)}
-                    className={`p-3 rounded-2xl border transition-all cursor-pointer space-y-1.5 ${
+                    className={`p-3 rounded-2xl border transition-all cursor-pointer space-y-1 ${
                       isSelected
-                        ? 'bg-slate-900 border-orange-500 shadow-lg shadow-orange-500/10 ring-1 ring-orange-500'
-                        : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
+                        ? 'bg-[#1E163C] border-[#9B5CFF] shadow-[0_0_15px_rgba(155,92,255,0.3)] ring-1 ring-[#9B5CFF]'
+                        : 'bg-[#100D20]/85 border-white/8 hover:border-white/15'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase">{dName.slice(0, 3)}</span>
-                      {isDayToday && <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />}
+                      <span className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider">{dName.slice(0, 3)}</span>
+                      {isDayToday && <span className="w-1.5 h-1.5 rounded-full bg-[#00D5FF] animate-ping" />}
                     </div>
-                    <div className="text-xs font-bold text-slate-100 truncate">{day?.title || 'Rest Day'}</div>
-                    <div className="text-[10px]">
+                    <div className="text-xs font-display font-bold text-white truncate tracking-wide">{day?.title || 'Rest Day'}</div>
+                    <div className="text-[10px] font-mono">
                       {day?.is_rest_day ? (
-                        <span className="text-slate-500 font-semibold">Rest</span>
+                        <span className="text-slate-500">Rest</span>
                       ) : (
-                        <span className="text-orange-400 font-bold">{day?.exercises?.length || 0} exercises</span>
+                        <span className="text-[#00D5FF] font-semibold">{day?.exercises?.length || 0} exercises</span>
                       )}
                     </div>
                   </div>
@@ -628,30 +629,30 @@ export default function WorkoutPage() {
 
             {/* Day Editor (Stage A Detail) */}
             {activePlanDay && (
-              <div className="p-5 md:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-5">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
-                  <div className="space-y-1">
+              <div className="p-4 sm:p-5 rounded-3xl bg-[#100D20]/85 border border-[#9B5CFF]/20 backdrop-blur-xl space-y-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/8 pb-3.5">
+                  <div className="space-y-1 w-full sm:w-auto">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-orange-400 uppercase">{DAY_NAMES[activePlanDay.day_of_week]}</span>
-                      <span className="text-xs text-slate-400 font-medium">• {activePlanDay.scheduled_date}</span>
+                      <span className="text-xs font-display font-bold text-[#00D5FF] tracking-wider uppercase">{DAY_NAMES[activePlanDay.day_of_week]}</span>
+                      <span className="text-xs text-slate-400 font-mono">• {activePlanDay.scheduled_date}</span>
                     </div>
                     <input
                       type="text"
                       value={activePlanDay.title}
                       onChange={(e) => updateActiveDayField('title', e.target.value)}
-                      className="text-lg font-black text-slate-100 bg-transparent border-b border-slate-700 focus:outline-none focus:border-orange-500"
+                      className="text-base sm:text-lg font-display font-extrabold text-white bg-transparent border-b border-white/10 focus:outline-none focus:border-[#9B5CFF] w-full uppercase tracking-wide"
                     />
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
+                  <div className="flex items-center gap-2.5 self-end sm:self-auto">
+                    <label className="flex items-center gap-2 text-xs font-display font-bold text-slate-300 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={activePlanDay.is_rest_day}
                         onChange={(e) => updateActiveDayField('is_rest_day', e.target.checked)}
-                        className="rounded bg-slate-950 border-slate-700 text-orange-500 focus:ring-0"
+                        className="rounded bg-black/40 border-white/10 text-orange-500 focus:ring-0"
                       />
-                      <span>Mark as Rest Day</span>
+                      <span>REST DAY</span>
                     </label>
 
                     {!activePlanDay.is_rest_day && (
@@ -660,10 +661,10 @@ export default function WorkoutPage() {
                           loadDayIntoGymMode(activePlanDay);
                           setStage('gym_mode');
                         }}
-                        className="py-2 px-3.5 rounded-xl bg-orange-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md shadow-orange-500/20"
+                        className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white font-display font-bold text-xs tracking-wider uppercase flex items-center gap-1.5 shadow-[0_0_15px_rgba(155,92,255,0.35)] active:scale-95 cursor-pointer min-h-[44px]"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>Launch in Gym Mode</span>
+                        <span>START GYM MODE</span>
                       </button>
                     )}
                   </div>
@@ -673,41 +674,57 @@ export default function WorkoutPage() {
                 {!activePlanDay.is_rest_day && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-extrabold text-slate-100 text-sm">Planned Exercises</h4>
+                      <h4 className="font-display font-extrabold text-white text-xs sm:text-sm tracking-wider uppercase">Planned Exercises</h4>
                       <button
                         onClick={() => setIsExercisePickerOpen(true)}
-                        className="py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1 border border-slate-700"
+                        className="py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-display font-bold tracking-wider flex items-center gap-1 border border-white/8 transition-all min-h-[36px]"
                       >
-                        <Plus className="w-4 h-4 text-orange-400" />
+                        <Plus className="w-4 h-4 text-[#00D5FF]" />
                         <span>Add Exercise</span>
                       </button>
                     </div>
 
                     {(activePlanDay.exercises || []).length === 0 ? (
-                      <div className="p-8 rounded-2xl bg-slate-950/60 border border-slate-800 text-center text-xs text-slate-400">
-                        No exercises planned for this day yet. Click "Add Exercise" to select from the library.
+                      <div className="p-8 rounded-2xl bg-black/40 border border-dashed border-[#9B5CFF]/30 text-center space-y-3">
+                        <div className="w-12 h-12 rounded-2xl bg-[#9B5CFF]/15 text-[#9B5CFF] border border-[#9B5CFF]/30 flex items-center justify-center mx-auto">
+                          <Dumbbell className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1">
+                          <h4 className="font-display font-bold text-white text-sm uppercase">Your first workout starts here.</h4>
+                          <p className="text-xs text-[#A9A1BD] max-w-xs mx-auto">
+                            Add exercises to build today&apos;s routine or start an immediate session.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setIsExercisePickerOpen(true)}
+                          className="inline-flex items-center gap-1.5 py-2 px-4 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white font-display font-extrabold text-xs uppercase tracking-wider shadow-lg active:scale-95 transition-all cursor-pointer min-h-[44px]"
+                        >
+                          <Plus className="w-4 h-4 stroke-[2.5]" />
+                          <span>Add First Exercise</span>
+                        </button>
                       </div>
                     ) : (
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         {activePlanDay.exercises?.map((ex, idx) => (
                           <div
                             key={ex.id}
-                            className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3"
+                            className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.03] border border-white/6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3"
                           >
                             <div className="flex items-center gap-3">
-                              <span className="w-6 h-6 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center">
+                              <span className="w-6 h-6 rounded-lg bg-white/5 border border-white/8 text-slate-300 font-bold text-xs flex items-center justify-center shrink-0">
                                 {idx + 1}
                               </span>
                               <div>
-                                <h5 className="font-bold text-slate-100 text-sm">{ex.exercise_name}</h5>
-                                <span className="text-[11px] text-orange-400 font-medium">{ex.muscle_group}</span>
+                                <h5 className="font-display font-bold text-white text-xs sm:text-sm tracking-wider uppercase">{ex.exercise_name}</h5>
+                                <span className="text-[10px] text-[#00D5FF] font-mono">{ex.muscle_group}</span>
                               </div>
                             </div>
 
                             {/* Plan Parameters */}
-                            <div className="flex flex-wrap items-center gap-3 text-xs">
+                            <div className="flex flex-wrap items-center gap-2.5 text-xs">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-slate-400">Sets:</span>
+                                <span className="text-slate-400 font-mono text-[11px]">Sets:</span>
                                 <input
                                   type="number"
                                   value={ex.planned_sets}
@@ -716,12 +733,12 @@ export default function WorkoutPage() {
                                     updated[idx].planned_sets = Number(e.target.value);
                                     updateActiveDayField('exercises', updated);
                                   }}
-                                  className="w-14 py-1 px-2 rounded-lg bg-slate-900 border border-slate-800 text-center font-bold text-slate-100"
+                                  className="w-12 py-1 px-1.5 rounded-lg bg-black/40 border border-white/10 text-center font-bold text-white text-xs"
                                 />
                               </div>
 
                               <div className="flex items-center gap-1.5">
-                                <span className="text-slate-400">Target Reps:</span>
+                                <span className="text-slate-400 font-mono text-[11px]">Target Reps:</span>
                                 <input
                                   type="text"
                                   value={ex.target_reps}
@@ -730,31 +747,31 @@ export default function WorkoutPage() {
                                     updated[idx].target_reps = e.target.value;
                                     updateActiveDayField('exercises', updated);
                                   }}
-                                  className="w-16 py-1 px-2 rounded-lg bg-slate-900 border border-slate-800 text-center font-bold text-slate-100"
+                                  className="w-14 py-1 px-1.5 rounded-lg bg-black/40 border border-white/10 text-center font-bold text-white text-xs"
                                 />
                               </div>
 
                               {/* Ordering Controls */}
-                              <div className="flex items-center gap-1 border-l border-slate-800 pl-2">
+                              <div className="flex items-center gap-1 border-l border-white/10 pl-2">
                                 <button
                                   onClick={() => moveExerciseOrder(idx, 'up')}
                                   disabled={idx === 0}
-                                  className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30"
+                                  className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-20"
                                 >
-                                  <ArrowUp className="w-4 h-4" />
+                                  <ArrowUp className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => moveExerciseOrder(idx, 'down')}
                                   disabled={idx === (activePlanDay.exercises?.length || 0) - 1}
-                                  className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30"
+                                  className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-20"
                                 >
-                                  <ArrowDown className="w-4 h-4" />
+                                  <ArrowDown className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => removeExerciseFromActiveDay(ex.id)}
                                   className="p-1 text-slate-500 hover:text-rose-400"
                                 >
-                                  <Trash2 className="w-4 h-4" />
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </div>
@@ -773,27 +790,27 @@ export default function WorkoutPage() {
         {/* STAGE B: GYM MODE / IN-GYM WORKOUT LOGGER */}
         {/* ============================================================== */}
         {stage === 'gym_mode' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-5">
             {/* Top Workout Session Banner */}
-            <div className="p-4 md:p-5 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="p-3.5 sm:p-4 rounded-3xl bg-gradient-to-br from-[#0E1A38] via-[#0B132B] to-[#070C1E] border border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
               <div>
-                <div className="flex items-center gap-2 text-xs text-orange-400 font-bold mb-1">
-                  <span className="w-2 h-2 rounded-full bg-orange-400 animate-ping" />
-                  <span>Active Session • Scheduled: {activeScheduledDate}</span>
+                <div className="flex items-center gap-2 text-[10px] text-[#00D5FF] font-bold tracking-wider uppercase mb-0.5">
+                  <span className="w-2 h-2 rounded-full bg-[#00D5FF] animate-ping" />
+                  <span>ACTIVE GYM MODE • {activeScheduledDate}</span>
                 </div>
-                <h2 className="text-xl font-black text-slate-100">{activeWorkoutTitle}</h2>
+                <h2 className="text-base sm:text-xl font-display font-extrabold text-white tracking-wide uppercase">{activeWorkoutTitle}</h2>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-start sm:self-auto">
                 <button
                   onClick={() => setShowPlateCalc(true)}
-                  className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700"
+                  className="py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-display font-bold tracking-wider border border-white/8 transition-all uppercase"
                 >
                   Plate Calc
                 </button>
                 <button
                   onClick={() => setShowRestTimer(!showRestTimer)}
-                  className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-semibold border border-slate-700"
+                  className="py-1.5 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-display font-bold tracking-wider border border-emerald-500/30 transition-all uppercase"
                 >
                   Rest Timer
                 </button>
@@ -808,34 +825,34 @@ export default function WorkoutPage() {
             )}
 
             {/* Exercise Cards */}
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {gymExercises.map((ex) => (
                 <div
                   key={ex.id}
-                  className={`p-4 md:p-5 rounded-2xl border transition-all space-y-4 ${
+                  className={`p-3.5 sm:p-4 rounded-3xl border transition-all space-y-3 ${
                     ex.skipped
-                      ? 'bg-slate-950/40 border-slate-900 opacity-60'
-                      : 'bg-slate-900/90 border-slate-800'
+                      ? 'bg-black/30 border-white/5 opacity-50'
+                      : 'bg-[#100D20]/85 border-[#9B5CFF]/20 backdrop-blur-xl shadow-[0_8px_25px_rgba(0,0,0,0.4)]'
                   }`}
                 >
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <div className="flex items-center justify-between border-b border-white/8 pb-2.5">
                     <div>
-                      <h3 className="font-extrabold text-slate-100 text-base">{ex.name}</h3>
+                      <h3 className="font-display font-bold text-white text-sm sm:text-base tracking-wide uppercase">{ex.name}</h3>
                       <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-orange-400 font-bold text-[10px]">
+                        <span className="px-2 py-0.5 rounded-full bg-[#9B5CFF]/15 text-[#00D5FF] font-bold text-[10px] border border-[#9B5CFF]/25">
                           {ex.muscle}
                         </span>
-                        <span>• Prev: <strong className="text-slate-300">{ex.previousPerformance}</strong></span>
+                        <span>• Prev: <strong className="text-slate-200">{ex.previousPerformance}</strong></span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => toggleSkipGymExercise(ex.id)}
-                        className={`text-xs font-bold px-2.5 py-1 rounded-lg border transition-colors ${
+                        className={`text-xs font-display font-bold px-2.5 py-1 rounded-xl border transition-colors uppercase ${
                           ex.skipped
-                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                            : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-slate-700'
+                            ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                            : 'bg-white/5 text-slate-400 hover:text-white border-white/8'
                         }`}
                       >
                         {ex.skipped ? 'Skipped' : 'Skip'}
@@ -846,7 +863,7 @@ export default function WorkoutPage() {
                   {!ex.skipped && (
                     <div className="space-y-2">
                       {/* Table Header */}
-                      <div className="grid grid-cols-12 gap-2 text-center text-xs font-bold text-slate-400 px-1">
+                      <div className="grid grid-cols-12 gap-2 text-center text-[10px] font-display font-bold text-slate-400 px-1 tracking-wider uppercase">
                         <span className="col-span-2 text-left">SET</span>
                         <span className="col-span-4">WEIGHT (KG)</span>
                         <span className="col-span-4">REPS</span>
@@ -857,18 +874,18 @@ export default function WorkoutPage() {
                       {ex.sets.map((set) => (
                         <div
                           key={set.id}
-                          className={`grid grid-cols-12 gap-2 items-center p-2 rounded-xl border transition-all ${
+                          className={`grid grid-cols-12 gap-2 items-center p-2 rounded-2xl border transition-all ${
                             set.completed
-                              ? 'bg-emerald-950/25 border-emerald-500/40'
-                              : 'bg-slate-950/70 border-slate-800'
+                              ? 'bg-emerald-500/15 border-emerald-500/35'
+                              : 'bg-white/[0.03] border-white/6'
                           }`}
                         >
                           <div className="col-span-2 flex items-center gap-1.5">
-                            <span className="w-6 h-6 rounded-lg bg-slate-800 text-slate-200 font-bold text-xs flex items-center justify-center">
+                            <span className="w-6 h-6 rounded-lg bg-white/5 text-slate-200 font-bold text-xs flex items-center justify-center shrink-0">
                               {set.setNumber}
                             </span>
-                            <span className="text-[10px] text-slate-500 font-semibold hidden sm:inline">
-                              (Target: {set.plannedReps})
+                            <span className="text-[9px] text-slate-500 font-mono hidden sm:inline">
+                              ({set.plannedReps})
                             </span>
                           </div>
 
@@ -879,7 +896,7 @@ export default function WorkoutPage() {
                               step="0.5"
                               value={set.weightKg}
                               onChange={(e) => updateGymSetValue(ex.id, set.id, 'weightKg', Number(e.target.value))}
-                              className="w-full py-2 px-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-100 text-sm font-black text-center focus:outline-none focus:border-orange-500"
+                              className="w-full py-1.5 px-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs sm:text-sm font-bold text-center focus:outline-none focus:border-[#9B5CFF]"
                             />
                           </div>
 
@@ -889,7 +906,7 @@ export default function WorkoutPage() {
                               type="number"
                               value={set.reps}
                               onChange={(e) => updateGymSetValue(ex.id, set.id, 'reps', Number(e.target.value))}
-                              className="w-full py-2 px-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-100 text-sm font-black text-center focus:outline-none focus:border-orange-500"
+                              className="w-full py-1.5 px-2 rounded-xl bg-black/40 border border-white/10 text-white text-xs sm:text-sm font-bold text-center focus:outline-none focus:border-[#9B5CFF]"
                             />
                           </div>
 
@@ -897,13 +914,13 @@ export default function WorkoutPage() {
                           <div className="col-span-2 flex justify-end">
                             <button
                               onClick={() => toggleGymSetComplete(ex.id, set.id)}
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                                 set.completed
-                                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                                  ? 'bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                  : 'bg-white/5 text-slate-400 hover:bg-white/10'
                               }`}
                             >
-                              <Check className="w-5 h-5 stroke-[3]" />
+                              <Check className="w-4 h-4 stroke-[3]" />
                             </button>
                           </div>
                         </div>
@@ -912,7 +929,7 @@ export default function WorkoutPage() {
                       {/* Add Set Button */}
                       <button
                         onClick={() => addSetToGymExercise(ex.id)}
-                        className="w-full py-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                        className="w-full py-2 rounded-xl bg-white/[0.02] border border-dashed border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-display font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer uppercase tracking-wider"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>Add Set</span>
@@ -923,14 +940,14 @@ export default function WorkoutPage() {
               ))}
             </div>
 
-            {/* Complete Workout Bottom Bar */}
-            <div className="sticky bottom-16 md:bottom-4 z-30 pt-2">
+            {/* Complete Workout Bottom Bar with Safe Clearance Above Dock */}
+            <div className="pt-3 pb-8">
               <button
                 onClick={handleFinishGymWorkout}
                 disabled={isFinishing}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-base shadow-2xl shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-display font-extrabold text-sm sm:text-base tracking-wider shadow-[0_0_25px_rgba(16,185,129,0.35)] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer uppercase"
               >
-                <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
+                <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
                 <span>{isFinishing ? 'Saving Workout...' : 'Finish Workout & Save Session'}</span>
               </button>
             </div>
@@ -939,21 +956,24 @@ export default function WorkoutPage() {
 
         {/* MODAL: EXERCISE LIBRARY PICKER */}
         {isExercisePickerOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-5 space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="font-extrabold text-slate-100 text-sm">Add Exercise from Library</h3>
-                <button onClick={() => setIsExercisePickerOpen(false)} className="text-slate-400 hover:text-white">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/75 backdrop-blur-md">
+            <div className="bg-[#0B132B]/95 backdrop-blur-2xl border border-white/12 rounded-3xl w-full max-w-lg p-5 space-y-4 shadow-[0_25px_60px_rgba(0,0,0,0.9)] max-h-[85vh] flex flex-col">
+              <div className="flex items-center justify-between border-b border-white/8 pb-3">
+                <h3 className="font-display font-extrabold text-white text-base uppercase tracking-wider">Add Exercise from Library</h3>
+                <button
+                  onClick={() => setIsExercisePickerOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/8 flex items-center justify-center transition-all cursor-pointer"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <input
                 type="text"
-                placeholder="Search exercise..."
+                placeholder="Search exercise or muscle..."
                 value={exerciseSearch}
                 onChange={(e) => setExerciseSearch(e.target.value)}
-                className="w-full py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-100 focus:outline-none focus:border-orange-500"
+                className="w-full py-2.5 px-3.5 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF]"
               />
 
               <div className="overflow-y-auto space-y-1.5 flex-1 pr-1">
@@ -964,13 +984,15 @@ export default function WorkoutPage() {
                   <div
                     key={ex.id}
                     onClick={() => addExerciseToActiveDay(ex)}
-                    className="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-orange-500/50 flex items-center justify-between cursor-pointer transition-colors"
+                    className="p-3 rounded-2xl bg-white/[0.03] border border-white/6 hover:border-[#9B5CFF]/40 flex items-center justify-between cursor-pointer transition-colors group"
                   >
                     <div>
-                      <span className="font-bold text-slate-100 text-xs block">{ex.name}</span>
-                      <span className="text-[10px] text-orange-400">{ex.primaryMuscle} • {ex.category}</span>
+                      <span className="font-display font-bold text-white text-xs sm:text-sm block uppercase tracking-wide group-hover:text-[#00D5FF] transition-colors">{ex.name}</span>
+                      <span className="text-[10px] text-slate-400 font-mono">{ex.primaryMuscle} • {ex.category}</span>
                     </div>
-                    <Plus className="w-4 h-4 text-slate-400" />
+                    <div className="w-7 h-7 rounded-lg bg-white/5 group-hover:bg-[#9B5CFF] group-hover:text-white text-slate-400 flex items-center justify-center transition-colors">
+                      <Plus className="w-4 h-4" />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -980,11 +1002,13 @@ export default function WorkoutPage() {
 
         {/* MODAL: RESCHEDULE WORKOUT */}
         {rescheduleModalOpen && dayToReschedule && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-5 space-y-4 shadow-2xl">
-              <div className="flex items-center gap-2.5 border-b border-slate-800 pb-3">
-                <RotateCcw className="w-5 h-5 text-orange-400" />
-                <h3 className="font-bold text-slate-100 text-sm">Reschedule Missed Workout</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3.5 sm:p-4 bg-black/75 backdrop-blur-md">
+            <div className="bg-[#100D20]/95 backdrop-blur-2xl border border-white/12 rounded-3xl w-full max-w-md p-5 space-y-4 shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
+              <div className="flex items-center gap-2.5 border-b border-white/8 pb-3">
+                <div className="w-8 h-8 rounded-xl bg-[#9B5CFF]/15 text-[#9B5CFF] border border-[#9B5CFF]/25 flex items-center justify-center">
+                  <RotateCcw className="w-4 h-4" />
+                </div>
+                <h3 className="font-display font-extrabold text-white text-sm sm:text-base uppercase tracking-wider">Reschedule Missed Workout</h3>
               </div>
 
               <p className="text-xs text-slate-300">
@@ -992,31 +1016,31 @@ export default function WorkoutPage() {
               </p>
 
               <div>
-                <label className="text-xs font-bold text-slate-400 block mb-1">New Scheduled Date</label>
+                <label className="text-[11px] font-display font-bold text-slate-400 block mb-1 uppercase tracking-wider">New Scheduled Date</label>
                 <input
                   type="date"
                   value={rescheduleTargetDate}
                   onChange={(e) => setRescheduleTargetDate(e.target.value)}
-                  className="w-full py-2 px-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-100 font-bold"
+                  className="w-full py-2 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white font-mono font-bold focus:border-[#9B5CFF] outline-none"
                 />
               </div>
 
               {rescheduleConflictWarning && (
-                <div className="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/30 text-amber-300 text-xs">
+                <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs">
                   {rescheduleConflictWarning}
                 </div>
               )}
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-2 pt-2 border-t border-white/8">
                 <button
                   onClick={() => setRescheduleModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold"
+                  className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-display font-bold uppercase transition-all min-h-[44px]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmReschedule}
-                  className="flex-1 py-2.5 rounded-xl bg-orange-500 text-slate-950 text-xs font-black"
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white text-xs font-display font-black uppercase tracking-wider shadow-[0_0_15px_rgba(155,92,255,0.35)] active:scale-95 min-h-[44px]"
                 >
                   Confirm Reschedule
                 </button>

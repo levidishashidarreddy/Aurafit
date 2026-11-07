@@ -1,40 +1,42 @@
 'use client';
 
-import { Flame, Dumbbell, Settings, User } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import Link from 'next/link';
+import { CrossedDumbbellsLogo } from '@/components/brand/CrossedDumbbellsLogo';
 
 interface HeaderProps {
   title?: string;
-  userGoal?: string;
-  streakCount?: number;
+  subtitle?: string;
 }
 
-export function Header({ title, userGoal = 'PERFORMANCE MODE', streakCount = 12 }: HeaderProps) {
+export function Header({
+  title = "GYM HUB",
+  subtitle,
+}: HeaderProps) {
   return (
-    <header className="sticky top-0 z-20 bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        {/* Mobile brand icon */}
-        <div className="md:hidden w-9 h-9 rounded-xl bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center shadow-md shadow-orange-600/20">
-          <Dumbbell className="w-5 h-5 text-slate-950 stroke-[2.5]" />
+    <header className="sticky top-0 z-30 bg-[#070512]/90 backdrop-blur-2xl border-b border-white/8 px-4 py-2.5 flex items-center justify-between transition-all select-none">
+      <div className="flex items-center gap-2.5 min-w-0">
+        {/* Mobile brand emblem */}
+        <div className="md:hidden shrink-0">
+          <CrossedDumbbellsLogo size={32} animated={false} />
         </div>
-        <div>
-          <h2 className="font-display font-extrabold text-slate-100 text-base md:text-xl tracking-wider uppercase">
-            {title || "TODAY'S PERFORMANCE"}
+        <div className="min-w-0">
+          <h2 className="font-display font-extrabold text-[#F6F2FF] text-sm md:text-base tracking-wider uppercase truncate leading-tight">
+            {title}
           </h2>
-          <p className="font-display text-[10px] text-orange-400 font-semibold tracking-widest uppercase">{userGoal}</p>
+          {subtitle && (
+            <p className="font-mono text-[9px] md:text-[10px] text-[#A9A1BD] tracking-wider truncate leading-none mt-0.5">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center gap-1.5 text-orange-400 font-display text-xs font-bold tracking-wider">
-          <Flame className="w-4 h-4 fill-orange-400/20" />
-          <span>🔥 {streakCount} DAYS ACTIVE</span>
-        </div>
-
-        {/* Clear Settings / Profile Destination */}
+      <div className="flex items-center gap-2 shrink-0">
+        {/* Profile / Settings Button */}
         <Link
           href="/profile"
-          className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-orange-400 border border-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+          className="w-8 h-8 rounded-full bg-white/5 hover:bg-[#9B5CFF]/15 active:scale-95 text-slate-300 hover:text-[#00D5FF] border border-white/10 hover:border-[#9B5CFF]/40 flex items-center justify-center transition-all cursor-pointer shadow-[0_0_10px_rgba(155,92,255,0.15)]"
           title="Profile & Target Settings"
         >
           <Settings className="w-4 h-4" />

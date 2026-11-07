@@ -343,45 +343,45 @@ export default function ProgressPage() {
   };
 
   return (
-    <AppShell headerTitle="PROGRESS HUB — UNIFIED PERFORMANCE ANALYTICS">
-      {/* Top Banner: Dark Performance-Console Aesthetic */}
-      <div className="p-4 md:p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-orange-950/20 border border-slate-800/90 shadow-2xl space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <AppShell headerTitle="PROGRESS & ANALYTICS" headerSubtitle="BIOMETRICS, 1RM & VOLUME ANALYTICS">
+      {/* Top Banner */}
+      <div className="p-3.5 sm:p-5 rounded-3xl bg-[#100D20]/85 border border-[#9B5CFF]/25 shadow-[0_10px_30px_rgba(0,0,0,0.5)] space-y-3.5">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">
+            <div className="flex items-center gap-2 text-[10px] font-bold text-[#00D5FF] uppercase tracking-wider mb-0.5">
               <Zap className="w-3.5 h-3.5" />
-              <span>Unified Progress Engine (Single Source of Truth)</span>
+              <span>UNIFIED ANALYTICS ENGINE</span>
             </div>
-            <h1 className="text-xl md:text-2xl font-black text-slate-100 tracking-tight">
-              PROGRESS HUB & BIOMETRIC ANALYTICS
+            <h1 className="text-base sm:text-xl font-display font-extrabold text-white tracking-wide uppercase">
+              Progress Hub & Biometrics
             </h1>
-            <p className="text-xs text-slate-400 mt-0.5">
-              All metrics strictly synchronized with your centralized targets and verified tracking records.
+            <p className="text-xs text-[#A9A1BD] mt-0.5">
+              All metrics synchronized with your centralized targets and verified training history.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 self-stretch md:self-auto justify-end">
+          <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
             <button
               onClick={() => setShowWeightModal(true)}
-              className="py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-slate-950 text-xs font-bold font-display tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shadow-lg shadow-orange-500/20 uppercase"
+              className="py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] hover:brightness-110 text-white text-xs font-display font-bold tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_15px_rgba(155,92,255,0.3)] active:scale-95 uppercase"
             >
-              <Scale className="w-4 h-4 stroke-[2.2]" />
+              <Scale className="w-4 h-4 stroke-[2.4]" />
               <span>Log Weigh-In</span>
             </button>
           </div>
         </div>
 
         {/* Global Time Filter Controls */}
-        <div className="pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
+        <div className="pt-2.5 border-t border-white/8 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 max-w-full no-scrollbar">
             {(['7D', '30D', '3M', '6M', '1Y', 'ALL', 'CUSTOM'] as TimeFilterType[]).map((tf) => (
               <button
                 key={tf}
                 onClick={() => setTimeFilter(tf)}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`py-1.5 px-2.5 sm:px-3 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   timeFilter === tf
-                    ? 'bg-orange-500 text-slate-950 shadow-md shadow-orange-500/20'
-                    : 'bg-slate-950/70 text-slate-400 hover:text-slate-200 border border-slate-800/60'
+                    ? 'bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] text-white shadow-[0_0_15px_rgba(155,92,255,0.35)]'
+                    : 'bg-white/5 text-slate-400 hover:text-white border border-white/6'
                 }`}
               >
                 {tf}
@@ -389,42 +389,42 @@ export default function ProgressPage() {
             ))}
           </div>
 
-          <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-orange-400" />
+          <div className="text-[10px] sm:text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
+            <Calendar className="w-3 h-3 text-[#00D5FF]" />
             <span>
-              Period: <strong className="text-slate-200">{periodLabel}</strong>
+              Period: <strong className="text-white">{periodLabel}</strong>
             </span>
           </div>
         </div>
 
         {/* Custom Date Range Picker */}
         {timeFilter === 'CUSTOM' && (
-          <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 flex flex-wrap items-center gap-3">
-            <span className="text-xs text-slate-300 font-bold">Custom Range:</span>
+          <div className="p-3 rounded-2xl bg-black/40 border border-white/8 flex flex-wrap items-center gap-2.5">
+            <span className="text-xs text-slate-300 font-display font-bold uppercase">Custom:</span>
             <input
               type="date"
               value={customStartDate}
               onChange={(e) => setCustomStartDate(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-100 font-medium"
+              className="px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white font-mono"
             />
             <span className="text-xs text-slate-400">to</span>
             <input
               type="date"
               value={customEndDate}
               onChange={(e) => setCustomEndDate(e.target.value)}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-100 font-medium"
+              className="px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white font-mono"
             />
           </div>
         )}
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-white/8 max-w-full">
         {[
-          { id: 'body_activity', label: 'Body Weight & Daily Activity', icon: Scale },
-          { id: 'nutrition_analytics', label: 'Nutrition Macros & Fibre', icon: Utensils },
-          { id: 'workout_adherence', label: 'Workout Adherence & Frequency', icon: CalendarCheck },
-          { id: 'muscle_groups', label: 'Muscle Group Volume', icon: Layers },
+          { id: 'body_activity', label: 'Weight & Activity', icon: Scale },
+          { id: 'nutrition_analytics', label: 'Nutrition Macros', icon: Utensils },
+          { id: 'workout_adherence', label: 'Split Adherence', icon: CalendarCheck },
+          { id: 'muscle_groups', label: 'Muscle Volume', icon: Layers },
           { id: 'exercise_progression', label: 'Exercise Progression', icon: Dumbbell },
           { id: 'comparison_studio', label: 'Comparison Studio', icon: GitCompare },
         ].map((tab) => {
@@ -434,13 +434,13 @@ export default function ProgressPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as ActiveTabType)}
-              className={`flex items-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`flex items-center gap-1.5 py-2 px-3 rounded-xl text-xs font-display font-bold tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-slate-900 text-orange-400 border border-orange-500/30 shadow-lg'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                  ? 'bg-[#9B5CFF]/15 text-[#00D5FF] border border-[#9B5CFF]/35 shadow-[0_0_12px_rgba(155,92,255,0.2)]'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-orange-400' : 'text-slate-500'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#00D5FF]' : 'text-slate-500'}`} />
               <span>{tab.label}</span>
             </button>
           );
@@ -453,7 +453,7 @@ export default function ProgressPage() {
       {activeTab === 'body_activity' && (
         <div className="space-y-6">
           {/* Section A: Body Weight Tracking & 7-Day Moving Average */}
-          <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
@@ -601,7 +601,7 @@ export default function ProgressPage() {
           {/* Section B: Daily Steps & Activity Calories (Separate Unlabelled Axes) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Daily Steps Chart */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -667,7 +667,7 @@ export default function ProgressPage() {
             </div>
 
             {/* Manually Entered Activity Calories */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
@@ -743,7 +743,7 @@ export default function ProgressPage() {
       {activeTab === 'nutrition_analytics' && (
         <div className="space-y-6">
           {/* Calories Chart */}
-          <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
@@ -821,7 +821,7 @@ export default function ProgressPage() {
           {/* Protein & Carbohydrates Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Protein Chart */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -906,7 +906,7 @@ export default function ProgressPage() {
             </div>
 
             {/* Carbohydrates Chart */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
@@ -983,7 +983,7 @@ export default function ProgressPage() {
           {/* Fats & Dietary Fibre Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Total Fat Chart */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
@@ -1057,7 +1057,7 @@ export default function ProgressPage() {
             </div>
 
             {/* Dietary Fibre Chart */}
-            <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+            <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
@@ -1148,48 +1148,48 @@ export default function ProgressPage() {
       {/* TAB 3: WORKOUT ADHERENCE & FREQUENCY */}
       {/* ============================================================== */}
       {activeTab === 'workout_adherence' && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-5">
           {/* Adherence Overview Metric Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-display text-slate-400 font-bold uppercase tracking-wider block">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            <div className="p-3.5 sm:p-4 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
+              <span className="text-[9.5px] font-display text-slate-400 font-bold uppercase tracking-wider block">
                 PLANNED SESSIONS
               </span>
-              <div className="font-display font-extrabold text-2xl text-slate-100 mt-1">
+              <div className="font-display font-extrabold text-xl sm:text-2xl text-white mt-0.5">
                 {adherenceStats?.totalPlannedWorkouts || 0}
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-display text-emerald-400 font-bold uppercase tracking-wider block">
+            <div className="p-3.5 sm:p-4 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
+              <span className="text-[9.5px] font-display text-emerald-400 font-bold uppercase tracking-wider block">
                 COMPLETED SESSIONS
               </span>
-              <div className="font-display font-extrabold text-2xl text-emerald-400 mt-1">
+              <div className="font-display font-extrabold text-xl sm:text-2xl text-emerald-400 mt-0.5">
                 {adherenceStats?.totalCompletedWorkouts || 0}
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-display text-amber-400 font-bold uppercase tracking-wider block">
+            <div className="p-3.5 sm:p-4 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
+              <span className="text-[9.5px] font-display text-amber-400 font-bold uppercase tracking-wider block">
                 MISSED WORKOUTS
               </span>
-              <div className="font-display font-extrabold text-2xl text-amber-400 mt-1">
+              <div className="font-display font-extrabold text-xl sm:text-2xl text-amber-400 mt-0.5">
                 {adherenceStats?.totalMissedWorkouts || 0}
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-display text-cyan-400 font-bold uppercase tracking-wider block">
+            <div className="p-3.5 sm:p-4 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
+              <span className="text-[9.5px] font-display text-cyan-400 font-bold uppercase tracking-wider block">
                 PLAN ADHERENCE RATE
               </span>
-              <div className="font-display font-extrabold text-2xl text-cyan-400 mt-1">
+              <div className="font-display font-extrabold text-xl sm:text-2xl text-cyan-400 mt-0.5">
                 {adherenceStats?.adherencePercentage || 0}%
               </div>
             </div>
           </div>
 
           {/* Planned vs Completed Workouts by Week */}
-          <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
@@ -1353,7 +1353,7 @@ export default function ProgressPage() {
           </div>
 
           {/* Muscle Group Volume Comparison Bar Chart */}
-          <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
             <h4 className="font-display font-extrabold text-slate-100 text-base uppercase tracking-wider">
               MUSCLE GROUP VOLUME COMPARISON (CURRENT VS PRIOR PERIOD)
             </h4>
@@ -1408,12 +1408,12 @@ export default function ProgressPage() {
       {activeTab === 'exercise_progression' && (
         <div className="space-y-6">
           {/* Exercise Selector */}
-          <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row items-center gap-3">
+          <div className="p-3.5 sm:p-4 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl flex flex-col md:flex-row items-center gap-3 shadow-[0_8px_25px_rgba(0,0,0,0.4)]">
             <div className="w-full md:w-64">
               <select
                 value={selectedExerciseName}
                 onChange={(e) => setSelectedExerciseName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none focus:border-orange-500"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs sm:text-sm font-semibold outline-none focus:border-[#9B5CFF]"
               >
                 {EXERCISE_CATALOG.map((ex) => (
                   <option key={ex.id} value={ex.name}>
@@ -1444,7 +1444,7 @@ export default function ProgressPage() {
               {/* Exercise Weight & Volume Progression Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Weight Progression */}
-                <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+                <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
                   <h4 className="font-display font-extrabold text-slate-100 text-base uppercase">
                     WORKING WEIGHT PROGRESSION (KG)
                   </h4>
@@ -1487,7 +1487,7 @@ export default function ProgressPage() {
                 </div>
 
                 {/* Repetition Progression */}
-                <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+                <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
                   <h4 className="font-display font-extrabold text-slate-100 text-base uppercase">
                     REPETITION TRAJECTORY (TOTAL REPS PER SESSION)
                   </h4>
@@ -1536,9 +1536,9 @@ export default function ProgressPage() {
       {/* TAB 6: COMPARISON STUDIO */}
       {/* ============================================================== */}
       {activeTab === 'comparison_studio' && (
-        <div className="space-y-6">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-            <h4 className="font-display font-extrabold text-slate-100 text-base uppercase">
+        <div className="space-y-4 sm:space-y-5">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+            <h4 className="font-display font-extrabold text-white text-sm sm:text-base uppercase tracking-wide">
               SELECT EXERCISES TO COMPARE (MAX 4)
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -1561,7 +1561,7 @@ export default function ProgressPage() {
             </div>
           </div>
 
-          <div className="p-5 md:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-xl">
+          <div className="p-3.5 sm:p-5 rounded-3xl bg-[#0B132B]/85 border border-white/8 backdrop-blur-xl space-y-3.5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h4 className="font-display font-extrabold text-slate-100 text-base uppercase">
                 EXERCISE COMPARISON STUDIO ({comparisonMetric.toUpperCase()})
@@ -1650,40 +1650,40 @@ export default function ProgressPage() {
 
       {/* Log Body Weight Modal */}
       {showWeightModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3.5 sm:p-4">
+          <div className="w-full max-w-md bg-[#0B132B]/95 backdrop-blur-2xl border border-white/12 rounded-3xl p-5 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.9)] space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-white/8 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                  <Scale className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-2xl bg-[#9B5CFF]/15 text-[#00D5FF] border border-[#9B5CFF]/25 flex items-center justify-center">
+                  <Scale className="w-4 h-4 stroke-[2.2]" />
                 </div>
-                <h3 className="font-display font-extrabold text-slate-100 text-base uppercase">
+                <h3 className="font-display font-extrabold text-white text-base uppercase tracking-wider">
                   RECORD WEIGH-IN
                 </h3>
               </div>
               <button
                 onClick={() => setShowWeightModal(false)}
-                className="text-slate-400 hover:text-slate-200"
+                className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/8 flex items-center justify-center transition-all cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Date
                 </label>
                 <input
                   type="date"
                   value={modalWeightDate}
                   onChange={(e) => setModalWeightDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-mono focus:border-orange-500 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs sm:text-sm font-mono focus:border-[#9B5CFF] outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Body Weight (kg)
                 </label>
                 <input
@@ -1694,21 +1694,21 @@ export default function ProgressPage() {
                   placeholder="e.g. 74.5"
                   value={modalWeightKg}
                   onChange={(e) => setModalWeightKg(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-mono focus:border-orange-500 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs sm:text-sm font-mono font-bold focus:border-[#9B5CFF] outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-white/8">
               <button
                 onClick={() => setShowWeightModal(false)}
-                className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-display font-bold text-xs uppercase cursor-pointer"
+                className="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-display font-bold text-xs uppercase cursor-pointer transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveModalWeight}
-                className="py-2.5 px-5 rounded-xl bg-orange-500 hover:bg-orange-600 text-slate-950 font-display font-bold text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 cursor-pointer"
+                className="py-2.5 px-5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#00D5FF] hover:brightness-110 text-white font-display font-black text-xs uppercase tracking-wider shadow-[0_0_15px_rgba(155,92,255,0.35)] cursor-pointer active:scale-95 transition-all"
               >
                 Save Weigh-In
               </button>

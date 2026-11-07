@@ -1,11 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @layer base {
   body {
-    background-color: #0A0D12;
-    color: #F1F5F9;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #070512;
+    color: #F6F2FF;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -21,21 +24,127 @@
   text-transform: uppercase;
 }
 
+/* ============================================================ */
+/* FUTURE START DESIGN SYSTEM TOKENS                           */
+/* Deep Black/Midnight Purple, Electric Violet, Cyan & Magenta  */
+/* ============================================================ */
+
+/* Translucent Frosted Glass Surface */
+.glass-panel {
+  background: rgba(16, 13, 32, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(22, 17, 44, 0.62);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(155, 92, 255, 0.12);
+  box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.65);
+}
+
+.glass-card-hover {
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(155, 92, 255, 0.4);
+  background: rgba(30, 22, 60, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -8px rgba(155, 92, 255, 0.22);
+}
+
+/* Futuristic Floating Oval Glass Dock */
+.glass-dock {
+  background: rgba(16, 13, 32, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(155, 92, 255, 0.22);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.85), 0 0 25px -4px rgba(155, 92, 255, 0.22);
+}
+
+/* Elevated Glass (FUTURE START Hero Cards) */
+.glass-future {
+  background: rgba(35, 25, 60, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 45px -10px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Vertical Subtle Light Streaks (Inspired by FUTURE START Reference) */
+.bg-future-streaks {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 14px,
+    rgba(255, 255, 255, 0.02) 14px,
+    rgba(255, 255, 255, 0.02) 16px
+  );
+}
+
+/* Ambient Glow Utilities */
+.glow-violet {
+  box-shadow: 0 0 25px -4px rgba(155, 92, 255, 0.45);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 25px -4px rgba(0, 213, 255, 0.45);
+}
+
+.glow-magenta {
+  box-shadow: 0 0 25px -4px rgba(255, 66, 166, 0.45);
+}
+
+.glow-success {
+  box-shadow: 0 0 25px -4px rgba(56, 230, 165, 0.45);
+}
+
 /* Custom sleek athletic dark scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0D12;
+  background: #070512;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
+  background: #23193C;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #EA580C;
+  background: #9B5CFF;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Mobile & Touch Interaction Optimizations */
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+button, a, input, select {
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

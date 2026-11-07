@@ -28,100 +28,129 @@ export function MacroCards({
   const carbsPercent = Math.min(100, Math.round((carbsConsumed / (carbsTarget || 1)) * 100));
   const fatPercent = Math.min(100, Math.round((fatConsumed / (fatTarget || 1)) * 100));
 
+  const remainingKcal = Math.max(0, caloriesTarget - caloriesConsumed);
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      {/* Primary Calories Card (Dominant Visual Importance) */}
-      <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-orange-950/30 border border-orange-500/30 backdrop-blur-md relative overflow-hidden flex flex-col justify-between shadow-lg">
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-display text-xs text-orange-400 font-bold tracking-widest uppercase">CALORIES</span>
-          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
-            <Flame className="w-4 h-4 fill-orange-400/20" />
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3">
+      {/* Primary Calories Card (Dominant Hero Card) */}
+      <div className="col-span-2 md:col-span-1 p-4 rounded-3xl bg-gradient-to-br from-[#23193C] via-[#16112C] to-[#100D20] border border-[#9B5CFF]/35 relative overflow-hidden flex flex-col justify-between shadow-[0_12px_35px_rgba(0,0,0,0.6),0_0_20px_rgba(155,92,255,0.18)]">
+        {/* Subtle violet accent glow behind */}
+        <div className="absolute -top-10 -right-10 w-28 h-28 bg-[#9B5CFF]/20 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="flex items-center justify-between mb-3 relative z-10">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00D5FF] animate-ping" />
+            <span className="font-display text-[11px] text-[#00D5FF] font-bold tracking-widest uppercase">
+              CALORIE BUDGET
+            </span>
+          </div>
+          <div className="w-7 h-7 rounded-full bg-[#9B5CFF]/15 text-[#9B5CFF] border border-[#9B5CFF]/25 flex items-center justify-center">
+            <Flame className="w-3.5 h-3.5 fill-[#9B5CFF]/30" />
           </div>
         </div>
-        <div>
-          <div className="font-display text-2xl md:text-3xl font-extrabold text-slate-100 tracking-wider">
-            {caloriesConsumed} <span className="text-xs font-sans font-normal text-slate-400">/ {caloriesTarget} KCAL</span>
+
+        <div className="relative z-10">
+          <div className="flex items-baseline justify-between">
+            <div className="font-display text-2xl sm:text-3xl font-extrabold text-white tracking-wider">
+              {caloriesConsumed.toLocaleString()}{' '}
+              <span className="text-[11px] font-sans font-normal text-slate-400">
+                / {caloriesTarget.toLocaleString()} KCAL
+              </span>
+            </div>
+            <span className="text-xs font-mono font-bold text-[#00D5FF]">
+              {calPercent}%
+            </span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+
+          {/* Sleek Gradient Bar */}
+          <div className="w-full bg-black/40 rounded-full h-2 mt-2.5 overflow-hidden border border-white/5">
             <div
-              className="bg-gradient-to-r from-amber-600 to-orange-500 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-[#9B5CFF] via-[#7928CA] to-[#00D5FF] h-2 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(0,213,255,0.5)]"
               style={{ width: `${calPercent}%` }}
             />
           </div>
-          <div className="font-display text-[11px] text-slate-400 mt-1.5 font-semibold tracking-wider uppercase">
-            {caloriesTarget - caloriesConsumed} KCAL REMAINING
+
+          <div className="flex items-center justify-between font-display text-[10px] text-slate-400 mt-2 font-semibold tracking-wider uppercase">
+            <span>{remainingKcal} KCAL REMAINING</span>
+            <span className="text-slate-500">TODAY</span>
           </div>
         </div>
       </div>
 
       {/* Protein Card */}
-      <div className="p-4 md:p-5 rounded-2xl bg-slate-900/90 border border-slate-800/80 backdrop-blur-md relative overflow-hidden flex flex-col justify-between">
+      <div className="p-3.5 sm:p-4 rounded-3xl bg-[#100D20]/85 border border-[#00D5FF]/25 backdrop-blur-xl flex flex-col justify-between shadow-[0_8px_25px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-display text-xs text-slate-400 font-bold tracking-widest uppercase">PROTEIN</span>
-          <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
-            <Dumbbell className="w-4 h-4" />
+          <span className="font-display text-[10px] sm:text-[11px] font-bold text-[#00D5FF] tracking-wider uppercase">
+            PROTEIN
+          </span>
+          <div className="w-6 h-6 rounded-lg bg-[#00D5FF]/10 text-[#00D5FF] flex items-center justify-center">
+            <Dumbbell className="w-3.5 h-3.5" />
           </div>
         </div>
         <div>
-          <div className="font-display text-2xl md:text-3xl font-extrabold text-slate-100 tracking-wider">
-            {proteinConsumed} <span className="text-xs font-sans font-normal text-slate-400">/ {proteinTarget} G</span>
+          <div className="flex items-baseline justify-between">
+            <span className="font-display text-xl sm:text-2xl font-extrabold text-white">
+              {proteinConsumed} <span className="text-xs font-sans text-slate-400">/ {proteinTarget}g</span>
+            </span>
+            <span className="text-[10px] font-mono font-bold text-[#00D5FF]">{protPercent}%</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+          <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 overflow-hidden border border-white/5">
             <div
-              className="bg-slate-300 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-[#00D5FF] to-cyan-300 h-1.5 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,213,255,0.4)]"
               style={{ width: `${protPercent}%` }}
             />
-          </div>
-          <div className="font-display text-[11px] text-slate-400 mt-1.5 font-semibold tracking-wider uppercase">
-            {protPercent}% OF DAILY TARGET
           </div>
         </div>
       </div>
 
       {/* Carbs Card */}
-      <div className="p-4 md:p-5 rounded-2xl bg-slate-900/90 border border-slate-800/80 backdrop-blur-md relative overflow-hidden flex flex-col justify-between">
+      <div className="p-3.5 sm:p-4 rounded-3xl bg-[#100D20]/85 border border-[#FF42A6]/25 backdrop-blur-xl flex flex-col justify-between shadow-[0_8px_25px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-display text-xs text-slate-400 font-bold tracking-widest uppercase">CARBS</span>
-          <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
-            <Wheat className="w-4 h-4" />
+          <span className="font-display text-[10px] sm:text-[11px] font-bold text-[#FF42A6] tracking-wider uppercase">
+            CARBOHYDRATES
+          </span>
+          <div className="w-6 h-6 rounded-lg bg-[#FF42A6]/10 text-[#FF42A6] flex items-center justify-center">
+            <Wheat className="w-3.5 h-3.5" />
           </div>
         </div>
         <div>
-          <div className="font-display text-2xl md:text-3xl font-extrabold text-slate-100 tracking-wider">
-            {carbsConsumed} <span className="text-xs font-sans font-normal text-slate-400">/ {carbsTarget} G</span>
+          <div className="flex items-baseline justify-between">
+            <span className="font-display text-xl sm:text-2xl font-extrabold text-white">
+              {carbsConsumed} <span className="text-xs font-sans text-slate-400">/ {carbsTarget}g</span>
+            </span>
+            <span className="text-[10px] font-mono font-bold text-[#FF42A6]">{carbsPercent}%</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+          <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 overflow-hidden border border-white/5">
             <div
-              className="bg-slate-400 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-[#FF42A6] to-pink-400 h-1.5 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(255,66,166,0.4)]"
               style={{ width: `${carbsPercent}%` }}
             />
-          </div>
-          <div className="font-display text-[11px] text-slate-400 mt-1.5 font-semibold tracking-wider uppercase">
-            {carbsTarget - carbsConsumed} G REMAINING
           </div>
         </div>
       </div>
 
-      {/* Fats Card */}
-      <div className="p-4 md:p-5 rounded-2xl bg-slate-900/90 border border-slate-800/80 backdrop-blur-md relative overflow-hidden flex flex-col justify-between">
+      {/* Fat Card */}
+      <div className="p-3.5 sm:p-4 rounded-3xl bg-[#100D20]/85 border border-[#9B5CFF]/25 backdrop-blur-xl flex flex-col justify-between shadow-[0_8px_25px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-display text-xs text-slate-400 font-bold tracking-widest uppercase">FATS</span>
-          <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
-            <Droplet className="w-4 h-4" />
+          <span className="font-display text-[10px] sm:text-[11px] font-bold text-[#9B5CFF] tracking-wider uppercase">
+            HEALTHY FATS
+          </span>
+          <div className="w-6 h-6 rounded-lg bg-[#9B5CFF]/10 text-[#9B5CFF] flex items-center justify-center">
+            <Droplet className="w-3.5 h-3.5" />
           </div>
         </div>
         <div>
-          <div className="font-display text-2xl md:text-3xl font-extrabold text-slate-100 tracking-wider">
-            {fatConsumed} <span className="text-xs font-sans font-normal text-slate-400">/ {fatTarget} G</span>
+          <div className="flex items-baseline justify-between">
+            <span className="font-display text-xl sm:text-2xl font-extrabold text-white">
+              {fatConsumed} <span className="text-xs font-sans text-slate-400">/ {fatTarget}g</span>
+            </span>
+            <span className="text-[10px] font-mono font-bold text-[#9B5CFF]">{fatPercent}%</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 mt-2.5 overflow-hidden">
+          <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 overflow-hidden border border-white/5">
             <div
-              className="bg-slate-500 h-2 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-[#9B5CFF] to-violet-400 h-1.5 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(155,92,255,0.4)]"
               style={{ width: `${fatPercent}%` }}
             />
-          </div>
-          <div className="font-display text-[11px] text-slate-400 mt-1.5 font-semibold tracking-wider uppercase">
-            {fatPercent}% OF DAILY TARGET
           </div>
         </div>
       </div>

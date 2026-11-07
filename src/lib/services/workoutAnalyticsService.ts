@@ -186,152 +186,8 @@ const DEFAULT_SESSIONS_STORAGE_KEY = 'gymhub_saved_workout_sessions_v2';
 const DEFAULT_ANALYSES_STORAGE_KEY = 'gymhub_saved_workout_analyses_v2';
 
 export function getInitialSeedSessions(): EnrichedWorkoutSession[] {
-  // Generate 8 realistic historical sessions spread over the past 30 days
-  const now = new Date();
-  const makeDate = (daysAgo: number) => {
-    const d = new Date(now);
-    d.setDate(d.getDate() - daysAgo);
-    return d.toISOString().split('T')[0];
-  };
-
-  return [
-    {
-      id: 'sess-01',
-      user_id: 'guest',
-      title: 'Chest & Triceps Hypertrophy',
-      start_time: `${makeDate(26)}T09:00:00Z`,
-      end_time: `${makeDate(26)}T10:15:00Z`,
-      duration_seconds: 4500,
-      logged_at: makeDate(26),
-      completed: true,
-      sets: [
-        { id: 's101', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 1, set_type: 'working', weight_kg: 60, reps: 10, rpe: 7.5, completed: true, created_at: makeDate(26) },
-        { id: 's102', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 2, set_type: 'working', weight_kg: 65, reps: 8, rpe: 8, completed: true, created_at: makeDate(26) },
-        { id: 's103', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 3, set_type: 'working', weight_kg: 70, reps: 6, rpe: 9, completed: true, created_at: makeDate(26) },
-        { id: 's104', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000002', exercise_name: 'Incline Dumbbell Press', set_number: 1, set_type: 'working', weight_kg: 22, reps: 10, rpe: 8, completed: true, created_at: makeDate(26) },
-        { id: 's105', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000002', exercise_name: 'Incline Dumbbell Press', set_number: 2, set_type: 'working', weight_kg: 24, reps: 8, rpe: 8.5, completed: true, created_at: makeDate(26) },
-        { id: 's106', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000030', exercise_name: 'Triceps Rope Pushdown', set_number: 1, set_type: 'working', weight_kg: 25, reps: 12, rpe: 8, completed: true, created_at: makeDate(26) },
-        { id: 's107', session_id: 'sess-01', exercise_id: 'b0000000-0000-0000-0000-000000000030', exercise_name: 'Triceps Rope Pushdown', set_number: 2, set_type: 'working', weight_kg: 27.5, reps: 10, rpe: 9, completed: true, created_at: makeDate(26) },
-      ],
-    },
-    {
-      id: 'sess-02',
-      user_id: 'guest',
-      title: 'Back & Biceps Pull Day',
-      start_time: `${makeDate(23)}T10:00:00Z`,
-      end_time: `${makeDate(23)}T11:10:00Z`,
-      duration_seconds: 4200,
-      logged_at: makeDate(23),
-      completed: true,
-      sets: [
-        { id: 's201', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000010', exercise_name: 'Lat Pulldown', set_number: 1, set_type: 'working', weight_kg: 55, reps: 10, rpe: 7.5, completed: true, created_at: makeDate(23) },
-        { id: 's202', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000010', exercise_name: 'Lat Pulldown', set_number: 2, set_type: 'working', weight_kg: 60, reps: 8, rpe: 8, completed: true, created_at: makeDate(23) },
-        { id: 's203', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000011', exercise_name: 'Seated Cable Row', set_number: 1, set_type: 'working', weight_kg: 50, reps: 10, rpe: 7.5, completed: true, created_at: makeDate(23) },
-        { id: 's204', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000011', exercise_name: 'Seated Cable Row', set_number: 2, set_type: 'working', weight_kg: 55, reps: 8, rpe: 8.5, completed: true, created_at: makeDate(23) },
-        { id: 's205', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000020', exercise_name: 'Barbell Bicep Curl', set_number: 1, set_type: 'working', weight_kg: 30, reps: 10, rpe: 8, completed: true, created_at: makeDate(23) },
-        { id: 's206', session_id: 'sess-02', exercise_id: 'b0000000-0000-0000-0000-000000000020', exercise_name: 'Barbell Bicep Curl', set_number: 2, set_type: 'working', weight_kg: 32.5, reps: 8, rpe: 8.5, completed: true, created_at: makeDate(23) },
-      ],
-    },
-    {
-      id: 'sess-03',
-      user_id: 'guest',
-      title: 'Legs & Shoulders Power',
-      start_time: `${makeDate(20)}T08:30:00Z`,
-      end_time: `${makeDate(20)}T09:45:00Z`,
-      duration_seconds: 4500,
-      logged_at: makeDate(20),
-      completed: true,
-      sets: [
-        { id: 's301', session_id: 'sess-03', exercise_id: 'b0000000-0000-0000-0000-000000000050', exercise_name: 'Barbell Squat', set_number: 1, set_type: 'working', weight_kg: 80, reps: 8, rpe: 7.5, completed: true, created_at: makeDate(20) },
-        { id: 's302', session_id: 'sess-03', exercise_id: 'b0000000-0000-0000-0000-000000000050', exercise_name: 'Barbell Squat', set_number: 2, set_type: 'working', weight_kg: 85, reps: 8, rpe: 8.5, completed: true, created_at: makeDate(20) },
-        { id: 's303', session_id: 'sess-03', exercise_id: 'b0000000-0000-0000-0000-000000000051', exercise_name: 'Leg Press', set_number: 1, set_type: 'working', weight_kg: 140, reps: 10, rpe: 7.5, completed: true, created_at: makeDate(20) },
-        { id: 's304', session_id: 'sess-03', exercise_id: 'b0000000-0000-0000-0000-000000000040', exercise_name: 'Dumbbell Shoulder Press', set_number: 1, set_type: 'working', weight_kg: 20, reps: 10, rpe: 8, completed: true, created_at: makeDate(20) },
-        { id: 's305', session_id: 'sess-03', exercise_id: 'b0000000-0000-0000-0000-000000000042', exercise_name: 'Dumbbell Lateral Raise', set_number: 1, set_type: 'working', weight_kg: 10, reps: 12, rpe: 8, completed: true, created_at: makeDate(20) },
-      ],
-    },
-    {
-      id: 'sess-04',
-      user_id: 'guest',
-      title: 'Chest & Arms Strength',
-      start_time: `${makeDate(15)}T09:00:00Z`,
-      end_time: `${makeDate(15)}T10:10:00Z`,
-      duration_seconds: 4200,
-      logged_at: makeDate(15),
-      completed: true,
-      sets: [
-        { id: 's401', session_id: 'sess-04', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 1, set_type: 'working', weight_kg: 65, reps: 8, rpe: 7.5, completed: true, created_at: makeDate(15) },
-        { id: 's402', session_id: 'sess-04', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 2, set_type: 'working', weight_kg: 70, reps: 6, rpe: 8.5, completed: true, created_at: makeDate(15) },
-        { id: 's403', session_id: 'sess-04', exercise_id: 'b0000000-0000-0000-0000-000000000002', exercise_name: 'Incline Dumbbell Press', set_number: 1, set_type: 'working', weight_kg: 24, reps: 8, rpe: 8, completed: true, created_at: makeDate(15) },
-        { id: 's404', session_id: 'sess-04', exercise_id: 'b0000000-0000-0000-0000-000000000021', exercise_name: 'Dumbbell Bicep Curl', set_number: 1, set_type: 'working', weight_kg: 14, reps: 10, rpe: 8, completed: true, created_at: makeDate(15) },
-        { id: 's405', session_id: 'sess-04', exercise_id: 'b0000000-0000-0000-0000-000000000030', exercise_name: 'Triceps Rope Pushdown', set_number: 1, set_type: 'working', weight_kg: 27.5, reps: 10, rpe: 8, completed: true, created_at: makeDate(15) },
-      ],
-    },
-    {
-      id: 'sess-05',
-      user_id: 'guest',
-      title: 'Heavy Back & Deadlifts',
-      start_time: `${makeDate(11)}T10:00:00Z`,
-      end_time: `${makeDate(11)}T11:20:00Z`,
-      duration_seconds: 4800,
-      logged_at: makeDate(11),
-      completed: true,
-      sets: [
-        { id: 's501', session_id: 'sess-05', exercise_id: 'b0000000-0000-0000-0000-000000000013', exercise_name: 'Deadlift', set_number: 1, set_type: 'working', weight_kg: 100, reps: 6, rpe: 8, completed: true, created_at: makeDate(11) },
-        { id: 's502', session_id: 'sess-05', exercise_id: 'b0000000-0000-0000-0000-000000000013', exercise_name: 'Deadlift', set_number: 2, set_type: 'working', weight_kg: 110, reps: 5, rpe: 9, completed: true, created_at: makeDate(11) },
-        { id: 's503', session_id: 'sess-05', exercise_id: 'b0000000-0000-0000-0000-000000000010', exercise_name: 'Lat Pulldown', set_number: 1, set_type: 'working', weight_kg: 62.5, reps: 8, rpe: 8, completed: true, created_at: makeDate(11) },
-        { id: 's504', session_id: 'sess-05', exercise_id: 'b0000000-0000-0000-0000-000000000011', exercise_name: 'Seated Cable Row', set_number: 1, set_type: 'working', weight_kg: 55, reps: 10, rpe: 8, completed: true, created_at: makeDate(11) },
-      ],
-    },
-    {
-      id: 'sess-06',
-      user_id: 'guest',
-      title: 'Leg Day Volume Focus',
-      start_time: `${makeDate(7)}T08:00:00Z`,
-      end_time: `${makeDate(7)}T09:15:00Z`,
-      duration_seconds: 4500,
-      logged_at: makeDate(7),
-      completed: true,
-      sets: [
-        { id: 's601', session_id: 'sess-06', exercise_id: 'b0000000-0000-0000-0000-000000000050', exercise_name: 'Barbell Squat', set_number: 1, set_type: 'working', weight_kg: 85, reps: 8, rpe: 8, completed: true, created_at: makeDate(7) },
-        { id: 's602', session_id: 'sess-06', exercise_id: 'b0000000-0000-0000-0000-000000000050', exercise_name: 'Barbell Squat', set_number: 2, set_type: 'working', weight_kg: 90, reps: 6, rpe: 8.5, completed: true, created_at: makeDate(7) },
-        { id: 's603', session_id: 'sess-06', exercise_id: 'b0000000-0000-0000-0000-000000000051', exercise_name: 'Leg Press', set_number: 1, set_type: 'working', weight_kg: 150, reps: 10, rpe: 8, completed: true, created_at: makeDate(7) },
-        { id: 's604', session_id: 'sess-06', exercise_id: 'b0000000-0000-0000-0000-000000000052', exercise_name: 'Leg Extension', set_number: 1, set_type: 'working', weight_kg: 45, reps: 12, rpe: 8.5, completed: true, created_at: makeDate(7) },
-      ],
-    },
-    {
-      id: 'sess-07',
-      user_id: 'guest',
-      title: 'Shoulders & Arms Hypertrophy',
-      start_time: `${makeDate(4)}T09:30:00Z`,
-      end_time: `${makeDate(4)}T10:40:00Z`,
-      duration_seconds: 4200,
-      logged_at: makeDate(4),
-      completed: true,
-      sets: [
-        { id: 's701', session_id: 'sess-07', exercise_id: 'b0000000-0000-0000-0000-000000000040', exercise_name: 'Dumbbell Shoulder Press', set_number: 1, set_type: 'working', weight_kg: 22, reps: 8, rpe: 8, completed: true, created_at: makeDate(4) },
-        { id: 's702', session_id: 'sess-07', exercise_id: 'b0000000-0000-0000-0000-000000000042', exercise_name: 'Dumbbell Lateral Raise', set_number: 1, set_type: 'working', weight_kg: 12, reps: 10, rpe: 8.5, completed: true, created_at: makeDate(4) },
-        { id: 's703', session_id: 'sess-07', exercise_id: 'b0000000-0000-0000-0000-000000000020', exercise_name: 'Barbell Bicep Curl', set_number: 1, set_type: 'working', weight_kg: 32.5, reps: 10, rpe: 8, completed: true, created_at: makeDate(4) },
-        { id: 's704', session_id: 'sess-07', exercise_id: 'b0000000-0000-0000-0000-000000000030', exercise_name: 'Triceps Rope Pushdown', set_number: 1, set_type: 'working', weight_kg: 30, reps: 10, rpe: 8.5, completed: true, created_at: makeDate(4) },
-      ],
-    },
-    {
-      id: 'sess-08',
-      user_id: 'guest',
-      title: 'Chest & Upper Body Peak',
-      start_time: `${makeDate(1)}T10:00:00Z`,
-      end_time: `${makeDate(1)}T11:15:00Z`,
-      duration_seconds: 4500,
-      logged_at: makeDate(1),
-      completed: true,
-      sets: [
-        { id: 's801', session_id: 'sess-08', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 1, set_type: 'working', weight_kg: 70, reps: 8, rpe: 8, completed: true, created_at: makeDate(1) },
-        { id: 's802', session_id: 'sess-08', exercise_id: 'b0000000-0000-0000-0000-000000000001', exercise_name: 'Barbell Bench Press', set_number: 2, set_type: 'working', weight_kg: 75, reps: 6, rpe: 9, completed: true, created_at: makeDate(1) },
-        { id: 's803', session_id: 'sess-08', exercise_id: 'b0000000-0000-0000-0000-000000000002', exercise_name: 'Incline Dumbbell Press', set_number: 1, set_type: 'working', weight_kg: 26, reps: 8, rpe: 8.5, completed: true, created_at: makeDate(1) },
-        { id: 's804', session_id: 'sess-08', exercise_id: 'b0000000-0000-0000-0000-000000000004', exercise_name: 'Cable Chest Fly', set_number: 1, set_type: 'working', weight_kg: 17.5, reps: 12, rpe: 8, completed: true, created_at: makeDate(1) },
-        { id: 's805', session_id: 'sess-08', exercise_id: 'b0000000-0000-0000-0000-000000000030', exercise_name: 'Triceps Rope Pushdown', set_number: 1, set_type: 'working', weight_kg: 32.5, reps: 8, rpe: 9, completed: true, created_at: makeDate(1) },
-      ],
-    },
-  ];
+  // Zero mock data: return empty array so only real user sessions appear
+  return [];
 }
 
 // Fetch all sessions (Supabase + localStorage fallback)
@@ -416,9 +272,8 @@ export async function fetchUserWorkoutSessions(userId?: string): Promise<Enriche
         console.error('Failed to parse local sessions:', e);
       }
     }
-    if (!sessions || sessions.length === 0) {
-      sessions = getInitialSeedSessions();
-      localStorage.setItem(DEFAULT_SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
+    if (!sessions) {
+      sessions = [];
     }
   }
 
@@ -442,7 +297,7 @@ export function saveSessionToLocalCache(session: EnrichedWorkoutSession) {
   if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(DEFAULT_SESSIONS_STORAGE_KEY);
-    const existing: EnrichedWorkoutSession[] = raw ? JSON.parse(raw) : getInitialSeedSessions();
+    const existing: EnrichedWorkoutSession[] = raw ? JSON.parse(raw) : [];
     const updated = [
       ...existing.filter((s) => s.id !== session.id),
       session,
@@ -1152,9 +1007,8 @@ export async function fetchWorkoutAnalyses(userId?: string): Promise<WorkoutAnal
         console.error('Failed to parse local analyses:', e);
       }
     }
-    if (!analyses || analyses.length === 0) {
-      analyses = getSeedAnalyses();
-      localStorage.setItem(DEFAULT_ANALYSES_STORAGE_KEY, JSON.stringify(analyses));
+    if (!analyses) {
+      analyses = [];
     }
   }
 
@@ -1165,7 +1019,7 @@ export function saveWorkoutAnalysisToLocal(analysis: WorkoutAnalysis) {
   if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(DEFAULT_ANALYSES_STORAGE_KEY);
-    const existing: WorkoutAnalysis[] = raw ? JSON.parse(raw) : getSeedAnalyses();
+    const existing: WorkoutAnalysis[] = raw ? JSON.parse(raw) : [];
     const updated = [analysis, ...existing.filter((a) => a.id !== analysis.id && a.session_id !== analysis.session_id)];
     localStorage.setItem(DEFAULT_ANALYSES_STORAGE_KEY, JSON.stringify(updated));
   } catch (err) {
@@ -1174,47 +1028,5 @@ export function saveWorkoutAnalysisToLocal(analysis: WorkoutAnalysis) {
 }
 
 function getSeedAnalyses(): WorkoutAnalysis[] {
-  return [
-    {
-      id: 'analysis-01',
-      user_id: 'guest',
-      session_id: 'sess-08',
-      rating: 8.8,
-      rating_explanation: 'Strong progressive overload on Barbell Bench Press with controlled RPE 8-9 execution across all working sets.',
-      progress_summary: 'Overall training volume increased by +6.8% compared to the prior comparable push workout.',
-      improvements: [
-        'Bench Press top working set achieved 75 kg × 6 reps at RPE 9 (new working set PR).',
-        'Incline Dumbbell Press maintained high stability with 26 kg for 8 clean reps.',
-        'Total chest stimulus reached 3,140 kg with consistent volume distribution.',
-      ],
-      stagnations: [
-        'Triceps Rope Pushdown load remained static at 32.5 kg compared to previous week.',
-      ],
-      fatigue_cautions: 'RPE 9 on final heavy set indicates near-maximal neuromuscular demand; ensure 48h rest before next heavy pressing session.',
-      next_session_tips: 'Aim for 75 kg × 7 reps or introduce 77.5 kg on top set if initial warmup sets feel explosive.',
-      data_limitations: 'Rest interval timings and sleep/recovery metrics were unrecorded.',
-      model_metadata: 'GYM HUB Deterministic Engine v2.1',
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      id: 'analysis-02',
-      user_id: 'guest',
-      session_id: 'sess-06',
-      rating: 8.2,
-      rating_explanation: 'Solid compound volume on Barbell Squats accompanied by high accessory volume on Leg Press.',
-      progress_summary: 'Lower body volume remained stable within 2.1% of previous leg session.',
-      improvements: [
-        'Squat top set maintained at 90 kg × 6 reps with solid depth.',
-        'Leg Press accessory sets loaded to 150 kg for clean 10 reps.',
-      ],
-      stagnations: [
-        'Hamstring flexion volume was low; consider pairing squats with Romanian Deadlifts for balance.',
-      ],
-      fatigue_cautions: 'Quad fatigue high; stay hydrated and monitor knee stability.',
-      next_session_tips: 'Increase Leg Press by 5-10 kg or add a 3rd set of Squats.',
-      data_limitations: 'Bar speed and tempo was unmeasured.',
-      model_metadata: 'GYM HUB Deterministic Engine v2.1',
-      created_at: new Date(Date.now() - 7 * 86400000).toISOString(),
-    },
-  ];
+  return [];
 }

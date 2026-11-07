@@ -29,7 +29,16 @@ export interface Profile {
   target_steps: number;
   weekly_training_days?: number;
   streak_count: number;
+  longest_streak?: number;
+  last_streak_date?: string;
   onboarding_completed: boolean;
+  onboarding_step?: number;
+  fitness_goals?: string[];
+  preferred_workout_time?: string;
+  workout_location?: string;
+  dietary_preference?: string;
+  units_preference?: 'metric' | 'imperial';
+  reminders_enabled?: boolean;
   created_at: string;
   updated_at: string;
 }

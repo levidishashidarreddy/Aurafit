@@ -1,6 +1,7 @@
 'use client';
 
-import { TrendingUp, Plus, Scale } from 'lucide-react';
+import { Scale, TrendingDown, TrendingUp, Plus, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import {
   AreaChart,
   Area,
@@ -9,128 +10,148 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import Link from 'next/link';
 
-export interface WeightDataPoint {
+interface WeightDataPoint {
   date: string;
   weight: number;
 }
 
-export interface WeightChartCardProps {
-  currentWeightKg?: number | null;
-  startWeightKg?: number | null;
-  goalWeightKg?: number | null;
+interface WeightChartCardProps {
+  currentWeight?: number | null;
+  targetWeight?: number;
   data?: WeightDataPoint[];
-  onAddWeight?: () => void;
+  deltaKg?: number | null;
+  daysSpan?: number;
 }
 
 export function WeightChartCard({
-  currentWeightKg = null,
-  startWeightKg = null,
-  goalWeightKg = null,
+  currentWeight,
+  targetWeight = 75,
   data = [],
-  onAddWeight,
+  deltaKg = null,
+  daysSpan = 30,
 }: WeightChartCardProps) {
-  const hasData = currentWeightKg !== null && data.length > 0;
-  const delta =
-    hasData && startWeightKg !== null
-      ? (currentWeightKg - startWeightKg).toFixed(1)
-      : null;
-  const isGain = delta !== null ? Number(delta) >= 0 : false;
+  const isLoss = (deltaKg ?? 0) < 0;
+  const hasData = data && data.length > 0;
 
   return (
-    <div className="p-5 md:p-6 rounded-2xl bg-slate-900/90 border border-slate-800/80 backdrop-blur-md space-y-4 shadow-xl">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="p-4 sm:p-5 rounded-3xl bg-[#100D20]/85 border border-[#00D5FF]/25 backdrop-blur-xl space-y-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-white/8 pb-3">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
-            <Scale className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-[#00D5FF]/15 text-[#00D5FF] border border-[#00D5FF]/25 flex items-center justify-center shrink-0">
+            <Scale className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
-            <span className="font-display text-[10px] text-orange-400 font-bold tracking-widest uppercase">
-              BODY WEIGHT TREND
+            <span className="font-display text-[10px] text-[#00D5FF] font-bold tracking-widest uppercase">
+              BIOMETRICS & WEIGHT
             </span>
-            <h4 className="font-display font-extrabold text-slate-100 text-lg md:text-xl tracking-wider uppercase">
-              {hasData ? (
-                <>
-                  {currentWeightKg} KG{' '}
-                  {delta !== null && (
-                    <span className="text-xs font-sans text-slate-400 font-normal">
-                      ({isGain ? `+${delta}` : delta} KG SINCE START)
-                    </span>
-                  )}
-                </>
-              ) : (
-                <span className="text-slate-400">NOT LOGGED YET</span>
+            <div className="flex items-baseline gap-2">
+              <h4 className="font-display font-extrabold text-white text-xl tracking-wider">
+                {currentWeight ? `${currentWeight} KG` : 'NOT LOGGED'}
+              </h4>
+              {targetWeight && (
+                <span className="text-[10px] font-mono text-slate-400">
+                  Target: {targetWeight} kg
+                </span>
               )}
-            </h4>
-            <p className="font-display text-xs text-slate-400 tracking-wider uppercase">
-              GOAL TARGET: {goalWeightKg ? `${goalWeightKg} KG` : 'NOT SET'}
-            </p>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {onAddWeight ? (
-            <button
-              onClick={onAddWeight}
-              className="py-2 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-orange-400 border border-slate-700/60 font-display text-xs font-bold tracking-wider flex items-center gap-1 cursor-pointer transition-all active:scale-95 uppercase"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>LOG WEIGH-IN</span>
-            </button>
-          ) : (
-            <Link
-              href="/activity"
-              className="py-2 px-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-orange-400 border border-slate-700/60 font-display text-xs font-bold tracking-wider flex items-center gap-1 transition-all active:scale-95 uppercase cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>LOG WEIGH-IN</span>
-            </Link>
-          )}
-        </div>
+        {/* Delta Tag */}
+        {deltaKg !== null && deltaKg !== undefined && (
+          <div
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-mono font-bold border ${
+              isLoss
+                ? 'bg-[#38E6A5]/15 text-[#38E6A5] border-[#38E6A5]/30'
+                : 'bg-[#FF42A6]/15 text-[#FF42A6] border-[#FF42A6]/30'
+            }`}
+          >
+            {isLoss ? (
+              <TrendingDown className="w-3.5 h-3.5" />
+            ) : (
+              <TrendingUp className="w-3.5 h-3.5" />
+            )}
+            <span>
+              {deltaKg > 0 ? `+${deltaKg}` : deltaKg} kg ({daysSpan}d)
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Chart or Empty state */}
-      {!hasData ? (
-        <div className="py-8 text-center border border-dashed border-slate-800 rounded-xl space-y-2">
-          <p className="text-xs text-slate-400">No body weight logged yet.</p>
-          <p className="text-[11px] text-slate-500">
-            Log your daily weigh-ins in Activity & Body Weight to view 7-day moving averages and trend analytics.
-          </p>
-        </div>
-      ) : (
-        <div className="h-44 w-full pt-2">
+      {/* Chart or Zero-Mock Empty State */}
+      <div className="h-36 w-full -mx-2">
+        {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <defs>
-                <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#EA580C" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#EA580C" stopOpacity={0} />
+                <linearGradient id="weightFutureGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00D5FF" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#00D5FF" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" stroke="#64748B" fontSize={11} tickLine={false} />
-              <YAxis domain={['dataMin - 1', 'dataMax + 1']} stroke="#64748B" fontSize={11} tickLine={false} />
+              <XAxis
+                dataKey="date"
+                stroke="#6B7280"
+                fontSize={9}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#6B7280"
+                fontSize={9}
+                tickLine={false}
+                axisLine={false}
+                domain={['auto', 'auto']}
+              />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#0F172A',
-                  borderColor: '#334155',
-                  borderRadius: '0.75rem',
-                  fontSize: '12px',
-                  color: '#F8FAFC',
+                  backgroundColor: '#070512',
+                  border: '1px solid rgba(0,213,255,0.3)',
+                  borderRadius: '12px',
+                  fontSize: '11px',
+                  color: '#fff',
                 }}
+                formatter={(val: any) => [`${val} kg`, 'Weight']}
               />
               <Area
                 type="monotone"
                 dataKey="weight"
-                stroke="#F97316"
+                stroke="#00D5FF"
                 strokeWidth={2.5}
                 fillOpacity={1}
-                fill="url(#weightGrad)"
+                fill="url(#weightFutureGradient)"
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-      )}
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center text-center p-3 space-y-1.5">
+            <Scale className="w-6 h-6 text-slate-500" />
+            <p className="text-xs text-[#A9A1BD] font-medium">No weigh-in records logged yet.</p>
+            <p className="text-[10px] text-slate-500 font-mono">Record your first weigh-in to plot weight trends.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer Link / Action */}
+      <div className="pt-2 border-t border-white/8 flex items-center justify-between">
+        <Link
+          href="/activity?tab=weight"
+          className="text-xs font-display font-bold text-[#00D5FF] hover:underline flex items-center gap-1 uppercase tracking-wider cursor-pointer"
+        >
+          <span>VIEW FULL WEIGH-IN LOG</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+
+        <Link
+          href="/activity?tab=weight"
+          className="py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-display font-bold text-xs uppercase flex items-center gap-1.5 border border-white/10 transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5 text-[#00D5FF]" />
+          <span>LOG WEIGH-IN</span>
+        </Link>
+      </div>
     </div>
   );
 }
