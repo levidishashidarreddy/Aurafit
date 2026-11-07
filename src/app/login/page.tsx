@@ -99,7 +99,10 @@ export default function LoginPage() {
             data: {
               full_name: fullName.trim() || 'Athlete',
             },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo:
+              typeof window !== 'undefined'
+                ? `${window.location.origin}/auth/callback`
+                : undefined,
           },
         });
 

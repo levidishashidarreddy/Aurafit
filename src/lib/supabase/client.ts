@@ -8,50 +8,13 @@ function formatSupabaseUrl(url?: string): string {
   return url;
 }
 
-// Circuit breaker for unreachable / dead Supabase instances
-let isSupabaseOffline = false;
-let lastOfflineCheck = 0;
-const OFFLINE_RETRY_INTERVAL_MS = 60000; // 60s cooldown before retrying network
-
+// Backward-compatible stubs (circuit breaker removed to allow standard, reliable network auth)
 export function isOfflineCircuitActive(): boolean {
-  if (!isSupabaseOffline) return false;
-  if (Date.now() - lastOfflineCheck > OFFLINE_RETRY_INTERVAL_MS) {
-    isSupabaseOffline = false;
-    return false;
-  }
-  return true;
+  return false;
 }
 
 export function tripOfflineCircuit(): void {
-  isSupabaseOffline = true;
-  lastOfflineCheck = Date.now();
-}
-
-// Custom fast fetch with 1800ms abort timeout & circuit breaker
-async function fastFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  if (isOfflineCircuitActive()) {
-    throw new TypeError('Supabase offline circuit active (skipping network to prevent lag)');
-  }
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    controller.abort();
-  }, 1800);
-
-  if (init?.signal) {
-    init.signal.addEventListener('abort', () => controller.abort());
-  }
-
-  try {
-    const res = await fetch(input, { ...init, signal: controller.signal });
-    return res;
-  } catch (err: any) {
-    // Network failure, DNS resolution failure, or timeout abort
-    tripOfflineCircuit();
-    throw err;
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  // No-op: Supabase client uses standard fetch without artificial abort timeouts
 }
 
 let browserClient: ReturnType<typeof createBrowserClient> | null = null;
@@ -62,11 +25,8 @@ export function createClient() {
   const url = formatSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
-  browserClient = createBrowserClient(url, key, {
-    global: {
-      fetch: fastFetch,
-    },
-  });
+  // Standard client without artificial 1800ms abort controller
+  browserClient = createBrowserClient(url, key);
 
   return browserClient;
 }
