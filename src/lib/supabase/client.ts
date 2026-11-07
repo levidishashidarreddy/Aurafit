@@ -2,10 +2,11 @@ import { createBrowserClient } from '@supabase/ssr';
 
 function formatSupabaseUrl(url?: string): string {
   if (!url || url.startsWith('your-')) return 'https://placeholder.supabase.co';
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    return `https://${url}`;
+  let clean = url.trim().replace(/\/+$/, '');
+  if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+    clean = `https://${clean}`;
   }
-  return url;
+  return clean;
 }
 
 // Backward-compatible stubs (circuit breaker removed to allow standard, reliable network auth)
@@ -23,7 +24,7 @@ export function createClient() {
   if (browserClient) return browserClient;
 
   const url = formatSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() || 'placeholder-key';
 
   // Standard client without artificial 1800ms abort controller
   browserClient = createBrowserClient(url, key);

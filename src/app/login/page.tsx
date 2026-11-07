@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Loader2,
   ChevronLeft,
+  RefreshCw,
 } from 'lucide-react';
 
 type AuthMode = 'welcome' | 'login' | 'register' | 'forgot';
@@ -31,8 +32,10 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Status
+  // Status & Safety
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNetworkError, setIsNetworkError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -83,17 +86,38 @@ export default function LoginPage() {
     }
   };
 
-  // Handle Email Auth (Login / Register)
+  // Handle Email Auth (Login / Register) with network/DNS error discrimination
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    if (isLoading || isSubmitting) return;
+
     setErrorMessage('');
     setSuccessMessage('');
+    setIsNetworkError(false);
+
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (mode === 'register' && !fullName.trim()) {
+      setErrorMessage('Please enter your full name to create an account.');
+      return;
+    }
+
+    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       if (mode === 'register') {
         const { data, error } = await supabase.auth.signUp({
-          email,
+          email: trimmedEmail,
           password,
           options: {
             data: {
@@ -107,30 +131,46 @@ export default function LoginPage() {
         });
 
         if (error) {
-          setErrorMessage(error.message);
-          setIsLoading(false);
+          const msg = error.message || '';
+          if (msg.toLowerCase().includes('already registered') || error.status === 422) {
+            setErrorMessage('An account with this email already exists. Please switch to Sign In.');
+          } else if (msg.toLowerCase().includes('password')) {
+            setErrorMessage('Password does not meet security requirements. Use at least 6 characters.');
+          } else if (msg.toLowerCase().includes('rate limit') || error.status === 429) {
+            setErrorMessage('Too many registration attempts. Please wait a moment and try again.');
+          } else {
+            setErrorMessage(error.message);
+          }
           return;
         }
 
-        // Check if session returned immediately (auto-confirm enabled)
+        // Handle successful registration response
         if (data.session) {
           router.push('/onboarding');
-        } else {
-          setSuccessMessage('Account created! Please check your email to confirm, then log in.');
+        } else if (data.user) {
+          setSuccessMessage('Account created! Please check your email to confirm your account, then sign in.');
           setTimeout(() => {
             setMode('login');
-          }, 3000);
+          }, 4000);
+        } else {
+          setErrorMessage('Registration could not be completed. Please try again.');
         }
       } else {
         // Mode: Login
         const { data, error } = await supabase.auth.signInWithPassword({
-          email,
+          email: trimmedEmail,
           password,
         });
 
         if (error) {
-          setErrorMessage(error.message);
-          setIsLoading(false);
+          const msg = error.message || '';
+          if (msg.toLowerCase().includes('invalid login credentials')) {
+            setErrorMessage('Invalid email or password. Please verify your credentials and try again.');
+          } else if (msg.toLowerCase().includes('email not confirmed')) {
+            setErrorMessage('Please confirm your email address before signing in.');
+          } else {
+            setErrorMessage(error.message);
+          }
           return;
         }
 
@@ -147,9 +187,25 @@ export default function LoginPage() {
         }
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Authentication error');
+      console.error('Authentication request failure:', err);
+      const rawMsg = err?.message || String(err || '');
+      const isDnsOrNetwork =
+        rawMsg.includes('Failed to fetch') ||
+        rawMsg.includes('ERR_NAME_NOT_RESOLVED') ||
+        rawMsg.includes('NetworkError') ||
+        err?.name === 'TypeError';
+
+      if (isDnsOrNetwork) {
+        setIsNetworkError(true);
+        setErrorMessage(
+          'Unable to reach the Supabase authentication server. Please check your internet connection or verify your Supabase project status.'
+        );
+      } else {
+        setErrorMessage(rawMsg || 'Authentication error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -246,15 +302,31 @@ export default function LoginPage() {
 
             {/* Error & Success Messages */}
             {errorMessage && (
-              <div className="p-3 rounded-2xl bg-rose-500/15 border border-rose-500/35 text-rose-300 text-xs flex items-center gap-2 animate-in fade-in">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{errorMessage}</span>
+              <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/35 text-rose-300 text-xs flex flex-col gap-2.5 animate-in fade-in">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+                  <span className="leading-relaxed flex-1">{errorMessage}</span>
+                </div>
+                {isNetworkError && (
+                  <div className="flex items-center justify-between pt-2 border-t border-rose-500/20">
+                    <span className="text-[10px] text-rose-400/90 font-mono">Status: Server Unreachable (DNS / Network)</span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleEmailAuth(e as any)}
+                      disabled={isLoading || isSubmitting}
+                      className="px-2.5 py-1 rounded-lg bg-rose-500/25 hover:bg-rose-500/35 active:scale-95 text-[11px] font-semibold text-white flex items-center gap-1.5 cursor-pointer transition-all border border-rose-500/30"
+                    >
+                      <RefreshCw className="w-3 h-3 text-rose-300" />
+                      <span>Retry</span>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             {successMessage && (
-              <div className="p-3 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>{successMessage}</span>
+              <div className="p-3.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-300 text-xs flex items-center gap-2.5 animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <span className="leading-relaxed">{successMessage}</span>
               </div>
             )}
 
@@ -374,11 +446,14 @@ export default function LoginPage() {
                 {/* Submit Action */}
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-[#9B5CFF] via-[#7928CA] to-[#00D5FF] hover:brightness-110 text-white font-display font-extrabold text-sm tracking-wider uppercase flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(155,92,255,0.4)] active:scale-95 transition-all cursor-pointer"
+                  disabled={isLoading || isSubmitting}
+                  className="w-full py-3.5 mt-2 rounded-2xl bg-gradient-to-r from-[#9B5CFF] via-[#7928CA] to-[#00D5FF] hover:brightness-110 disabled:opacity-75 disabled:cursor-not-allowed text-white font-display font-extrabold text-sm tracking-wider uppercase flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(155,92,255,0.4)] active:scale-95 transition-all cursor-pointer"
                 >
-                  {isLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                  {isLoading || isSubmitting ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      <span>{mode === 'register' ? 'CREATING ACCOUNT...' : 'SIGNING IN...'}</span>
+                    </div>
                   ) : (
                     <>
                       <span>{mode === 'register' ? 'CREATE ACCOUNT' : 'SIGN IN'}</span>

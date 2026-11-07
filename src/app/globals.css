@@ -136,6 +136,21 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes logoBreathPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.035);
+    opacity: 1;
+  }
+}
+
+.animate-breath-pulse {
+  animation: logoBreathPulse 3.8s ease-in-out infinite;
+}
+
 button, a, input, select {
   touch-action: manipulation;
 }

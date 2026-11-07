@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase/client';
 import { getUserProfile, clearUserLocalSessionCache } from '@/lib/services/profileService';
 import { DesktopSidebar } from './DesktopSidebar';
@@ -130,8 +131,18 @@ export function AppShell({ children, headerTitle, headerSubtitle }: AppShellProp
       {/* Main Content Area with safe bottom clearance for floating dock */}
       <div className="flex-1 flex flex-col min-w-0 pb-[calc(7.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
         <Header title={headerTitle} subtitle={headerSubtitle} />
-        <main className="flex-1 p-3.5 sm:p-5 md:p-6 max-w-7xl mx-auto w-full space-y-5">
-          {children}
+        <main className="flex-1 p-3.5 sm:p-5 md:p-6 max-w-7xl mx-auto w-full space-y-5 overflow-x-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.28,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="w-full space-y-5"
+          >
+            {children}
+          </motion.div>
         </main>
       </div>
 

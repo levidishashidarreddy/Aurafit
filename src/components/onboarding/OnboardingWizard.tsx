@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CrossedDumbbellsLogo } from '@/components/brand/CrossedDumbbellsLogo';
 import { calculateFitnessTargets, calculateBMI } from '@/lib/utils/fitness';
 import { ActivityLevel, FitnessGoal } from '@/lib/types/database';
@@ -31,8 +32,24 @@ interface OnboardingWizardProps {
 
 const DRAFT_KEY = 'gymhub_onboarding_draft_v2';
 
+const stepVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 20 : -20,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -20 : 20,
+    opacity: 0,
+  }),
+};
+
 export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWizardProps) {
   const [step, setStep] = useState<number>(1);
+  const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const [isFinishing, setIsFinishing] = useState<boolean>(false);
   const [showCompletionSplash, setShowCompletionSplash] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -199,6 +216,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
     if (!validateStep(step)) return;
     triggerHaptic(15);
     if (step < 5) {
+      setSlideDirection(1);
       const nextStep = step + 1;
       setStep(nextStep);
       saveDraft(nextStep);
@@ -303,9 +321,22 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
         )}
 
         {/* ============================================================== */}
-        {/* STEP 1: ABOUT YOU                                              */}
+        {/* ANIMATED STEP CONTENT WITH DIRECTIONAL TRANSITIONS           */}
         {/* ============================================================== */}
-        {step === 1 && (
+        <div className="overflow-hidden w-full">
+          <AnimatePresence mode="wait" custom={slideDirection}>
+            <motion.div
+              key={step}
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full"
+            >
+              {/* STEP 1: ABOUT YOU */}
+              {step === 1 && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <div className="space-y-1">
               <h3 className="text-base sm:text-lg font-display font-extrabold text-white uppercase flex items-center gap-2">
@@ -748,6 +779,9 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
             </div>
           </div>
         )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Quick Skip Option (Available once essential metrics are recorded) */}
         {step >= 2 && step <= 4 && (
@@ -772,6 +806,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
               type="button"
               onClick={() => {
                 triggerHaptic(10);
+                setSlideDirection(-1);
                 const prev = step - 1;
                 setStep(prev);
                 saveDraft(prev);
