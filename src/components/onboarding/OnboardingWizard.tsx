@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 
 interface OnboardingWizardProps {
+  userId?: string;
   initialName?: string;
   onComplete: (data: any) => Promise<void>;
 }
@@ -47,64 +48,66 @@ const stepVariants = {
   }),
 };
 
-export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWizardProps) {
+export function OnboardingWizard({ userId, initialName = '', onComplete }: OnboardingWizardProps) {
   const [step, setStep] = useState<number>(1);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const [isFinishing, setIsFinishing] = useState<boolean>(false);
-  const [showCompletionSplash, setShowCompletionSplash] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Step 1: Basic Profile
-  const [fullName, setFullName] = useState(initialName || '');
-  const [age, setAge] = useState<number>(24);
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
+  const draftKey = userId ? `gymhub_onboarding_draft_${userId}` : DRAFT_KEY;
 
-  // Step 2: Body Metrics
-  const [heightCm, setHeightCm] = useState<number>(178);
-  const [currentWeightKg, setCurrentWeightKg] = useState<number>(75);
-  const [goalWeightKg, setGoalWeightKg] = useState<number>(75);
+  // Step 1: Basic Profile - Initially completely empty
+  const [fullName, setFullName] = useState(initialName || '');
+  const [age, setAge] = useState<string>('');
+  const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>('');
+
+  // Step 2: Body Metrics - Initially completely empty
+  const [heightCm, setHeightCm] = useState<string>('');
+  const [currentWeightKg, setCurrentWeightKg] = useState<string>('');
+  const [goalWeightKg, setGoalWeightKg] = useState<string>('');
   const [waistCm, setWaistCm] = useState<string>('');
   const [chestCm, setChestCm] = useState<string>('');
 
-  // Step 3: Fitness Goals (Multi-selection)
-  const [selectedGoals, setSelectedGoals] = useState<string[]>(['muscle_gain', 'strength']);
+  // Step 3: Fitness Goals (Multi-selection) - Initially completely empty
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
 
-  // Step 4: Activity & Targets
-  const [activityLevel, setActivityLevel] = useState<ActivityLevel>('moderately_active');
-  const [weeklyTrainingDays, setWeeklyTrainingDays] = useState<number>(4);
-  const [dailyStepsGoal, setDailyStepsGoal] = useState<number>(10000);
-  const [customCalories, setCustomCalories] = useState<number | null>(null);
-  const [customProtein, setCustomProtein] = useState<number | null>(null);
-  const [waterGoalMl, setWaterGoalMl] = useState<number>(3000);
+  // Step 4: Activity & Targets - Initially unselected / empty
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel | ''>('');
+  const [weeklyTrainingDays, setWeeklyTrainingDays] = useState<string>('');
+  const [dailyStepsGoal, setDailyStepsGoal] = useState<string>('');
+  const [customCalories, setCustomCalories] = useState<string>('');
+  const [customProtein, setCustomProtein] = useState<string>('');
+  const [waterGoalMl, setWaterGoalMl] = useState<string>('');
 
-  // Step 5: Preferences
-  const [preferredWorkoutTime, setPreferredWorkoutTime] = useState<string>('evening');
-  const [workoutLocation, setWorkoutLocation] = useState<string>('gym');
-  const [dietaryPreference, setDietaryPreference] = useState<string>('flexible');
+  // Step 5: Preferences - Initially unselected / optional
+  const [preferredWorkoutTime, setPreferredWorkoutTime] = useState<string>('');
+  const [workoutLocation, setWorkoutLocation] = useState<string>('');
+  const [dietaryPreference, setDietaryPreference] = useState<string>('');
   const [unitsPreference, setUnitsPreference] = useState<'metric' | 'imperial'>('metric');
   const [remindersEnabled, setRemindersEnabled] = useState<boolean>(true);
 
-  // 1. Resume Onboarding from Draft after interruption
+  // 1. Resume Onboarding from User-Scoped Draft after interruption
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      const raw = localStorage.getItem(DRAFT_KEY);
+      const raw = localStorage.getItem(draftKey) || (userId ? null : localStorage.getItem(DRAFT_KEY));
       if (raw) {
         const d = JSON.parse(raw);
         if (d.fullName) setFullName(d.fullName);
-        if (d.age) setAge(d.age);
+        if (d.age) setAge(String(d.age));
         if (d.gender) setGender(d.gender);
-        if (d.heightCm) setHeightCm(d.heightCm);
-        if (d.currentWeightKg) setCurrentWeightKg(d.currentWeightKg);
-        if (d.goalWeightKg) setGoalWeightKg(d.goalWeightKg);
-        if (d.waistCm) setWaistCm(d.waistCm);
-        if (d.chestCm) setChestCm(d.chestCm);
-        if (d.selectedGoals?.length) setSelectedGoals(d.selectedGoals);
+        if (d.heightCm) setHeightCm(String(d.heightCm));
+        if (d.currentWeightKg) setCurrentWeightKg(String(d.currentWeightKg));
+        if (d.goalWeightKg) setGoalWeightKg(String(d.goalWeightKg));
+        if (d.waistCm) setWaistCm(String(d.waistCm));
+        if (d.chestCm) setChestCm(String(d.chestCm));
+        if (Array.isArray(d.selectedGoals)) setSelectedGoals(d.selectedGoals);
         if (d.activityLevel) setActivityLevel(d.activityLevel);
-        if (d.weeklyTrainingDays) setWeeklyTrainingDays(d.weeklyTrainingDays);
-        if (d.dailyStepsGoal) setDailyStepsGoal(d.dailyStepsGoal);
-        if (d.customCalories) setCustomCalories(d.customCalories);
-        if (d.customProtein) setCustomProtein(d.customProtein);
+        if (d.weeklyTrainingDays) setWeeklyTrainingDays(String(d.weeklyTrainingDays));
+        if (d.dailyStepsGoal) setDailyStepsGoal(String(d.dailyStepsGoal));
+        if (d.customCalories) setCustomCalories(String(d.customCalories));
+        if (d.customProtein) setCustomProtein(String(d.customProtein));
+        if (d.waterGoalMl) setWaterGoalMl(String(d.waterGoalMl));
         if (d.preferredWorkoutTime) setPreferredWorkoutTime(d.preferredWorkoutTime);
         if (d.workoutLocation) setWorkoutLocation(d.workoutLocation);
         if (d.dietaryPreference) setDietaryPreference(d.dietaryPreference);
@@ -113,9 +116,9 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
         if (d.step && d.step >= 1 && d.step <= 5) setStep(d.step);
       }
     } catch {}
-  }, []);
+  }, [draftKey, userId]);
 
-  // 2. Save Progress between steps
+  // 2. Save Progress between steps in user-scoped storage
   const saveDraft = (currentStep: number) => {
     if (typeof window === 'undefined') return;
     try {
@@ -134,6 +137,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
         dailyStepsGoal,
         customCalories,
         customProtein,
+        waterGoalMl,
         preferredWorkoutTime,
         workoutLocation,
         dietaryPreference,
@@ -141,7 +145,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
         remindersEnabled,
         step: currentStep,
       };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      localStorage.setItem(draftKey, JSON.stringify(draft));
     } catch {}
   };
 
@@ -153,8 +157,10 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
     }
   };
 
-  // Live BMI Calculation
-  const { bmi, category: bmiCategory } = calculateBMI(currentWeightKg, heightCm);
+  // Live BMI Calculation (handles empty values safely)
+  const numWeight = currentWeightKg ? parseFloat(currentWeightKg) : 0;
+  const numHeight = heightCm ? parseFloat(heightCm) : 0;
+  const { bmi, category: bmiCategory } = calculateBMI(numWeight, numHeight);
 
   // Suggested Targets Calculation (Mifflin-St Jeor)
   const primaryGoal: FitnessGoal = selectedGoals.includes('fat_loss')
@@ -165,24 +171,35 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
     ? 'recomposition'
     : 'maintenance';
 
+  const numAge = age ? parseInt(age, 10) : 25;
   const computed = calculateFitnessTargets({
-    gender,
-    age,
-    height_cm: heightCm,
-    weight_kg: currentWeightKg,
-    goal_weight_kg: goalWeightKg,
+    gender: (gender || 'male') as any,
+    age: numAge > 0 ? numAge : 25,
+    height_cm: numHeight > 0 ? numHeight : 175,
+    weight_kg: numWeight > 0 ? numWeight : 70,
+    goal_weight_kg: goalWeightKg ? parseFloat(goalWeightKg) : undefined,
     fitness_goal: primaryGoal,
-    activity_level: activityLevel,
+    activity_level: (activityLevel || 'moderately_active') as ActivityLevel,
   });
 
-  const activeCalories = customCalories ?? computed.target_calories;
-  const activeProtein = customProtein ?? computed.target_protein_g;
+  const hasMetricsForCalculation = numWeight > 0 && numHeight > 0 && numAge > 0;
+  const activeCalories = customCalories
+    ? parseInt(customCalories, 10)
+    : hasMetricsForCalculation
+    ? computed.target_calories
+    : '';
+  const activeProtein = customProtein
+    ? parseInt(customProtein, 10)
+    : hasMetricsForCalculation
+    ? computed.target_protein_g
+    : '';
 
   // Toggle multi-select goals
   const toggleGoal = (id: string) => {
     triggerHaptic(12);
+    if (validationError) setValidationError(null);
     setSelectedGoals((prev) =>
-      prev.includes(id) ? (prev.length > 1 ? prev.filter((g) => g !== id) : prev) : [...prev, id]
+      prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]
     );
   };
 
@@ -194,18 +211,33 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
         setValidationError('Please enter your full name to proceed.');
         return false;
       }
-      if (!age || age < 14 || age > 100) {
+      const a = parseInt(age, 10);
+      if (!age || isNaN(a) || a < 14 || a > 100) {
         setValidationError('Please enter a valid age between 14 and 100.');
         return false;
       }
     }
     if (currentStep === 2) {
-      if (!heightCm || heightCm < 90 || heightCm > 250) {
+      const h = parseFloat(heightCm);
+      if (!heightCm || isNaN(h) || h < 90 || h > 250) {
         setValidationError('Please enter a valid height in cm (90 - 250).');
         return false;
       }
-      if (!currentWeightKg || currentWeightKg < 30 || currentWeightKg > 300) {
+      const w = parseFloat(currentWeightKg);
+      if (!currentWeightKg || isNaN(w) || w < 30 || w > 300) {
         setValidationError('Please enter a valid current weight in kg (30 - 300).');
+        return false;
+      }
+    }
+    if (currentStep === 3) {
+      if (selectedGoals.length === 0) {
+        setValidationError('Please select at least one fitness goal to continue.');
+        return false;
+      }
+    }
+    if (currentStep === 4) {
+      if (!activityLevel) {
+        setValidationError('Please select your baseline activity level.');
         return false;
       }
     }
@@ -233,45 +265,74 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
 
   const handleFinalSubmission = async () => {
     if (isFinishing) return;
+    if (!validateStep(1) || !validateStep(2)) {
+      setStep(1);
+      return;
+    }
     setIsFinishing(true);
-    setShowCompletionSplash(true);
+    setValidationError(null);
+
+    const resolvedAge = age ? parseInt(age, 10) : null;
+    const resolvedHeight = heightCm ? parseFloat(heightCm) : null;
+    const resolvedWeight = currentWeightKg ? parseFloat(currentWeightKg) : null;
+    const resolvedGoalWeight = goalWeightKg ? parseFloat(goalWeightKg) : resolvedWeight;
+    const resolvedSteps = dailyStepsGoal ? parseInt(dailyStepsGoal, 10) : 10000;
+    const resolvedTrainingDays = weeklyTrainingDays ? parseInt(weeklyTrainingDays, 10) : 4;
+    const resolvedWater = waterGoalMl ? parseInt(waterGoalMl, 10) : 3000;
+    const resolvedCalories = customCalories
+      ? parseInt(customCalories, 10)
+      : computed.target_calories > 0
+      ? computed.target_calories
+      : 2000;
+    const resolvedProtein = customProtein
+      ? parseInt(customProtein, 10)
+      : computed.target_protein_g > 0
+      ? computed.target_protein_g
+      : 130;
 
     const payload = {
       full_name: fullName.trim() || 'Athlete',
-      age,
-      gender,
-      height_cm: heightCm,
-      current_weight_kg: currentWeightKg,
-      goal_weight_kg: goalWeightKg || currentWeightKg,
+      age: resolvedAge,
+      gender: gender || null,
+      height_cm: resolvedHeight,
+      current_weight_kg: resolvedWeight,
+      goal_weight_kg: resolvedGoalWeight,
+      fitness_goals: selectedGoals.length > 0 ? selectedGoals : ['general_fitness'],
       fitness_goal: primaryGoal,
-      fitness_goals: selectedGoals,
-      activity_level: activityLevel,
-      weekly_training_days: weeklyTrainingDays,
-      target_steps: dailyStepsGoal,
-      target_calories: activeCalories,
-      target_protein_g: activeProtein,
-      target_protein_min: Math.round(activeProtein * 0.95),
-      target_protein_max: Math.round(activeProtein * 1.05),
-      target_carbs_g: computed.target_carbs_g,
-      target_fat_g: computed.target_fat_g,
-      target_water_ml: waterGoalMl,
-      bmr: computed.bmr,
-      tdee: computed.tdee,
-      preferred_workout_time: preferredWorkoutTime,
-      workout_location: workoutLocation,
-      dietary_preference: dietaryPreference,
+      activity_level: activityLevel || 'moderately_active',
+      weekly_training_days: resolvedTrainingDays,
+      target_steps: resolvedSteps,
+      target_calories: resolvedCalories,
+      target_protein_g: resolvedProtein,
+      target_protein_min: Math.round(resolvedProtein * 0.95),
+      target_protein_max: Math.round(resolvedProtein * 1.05),
+      target_carbs_g: computed.target_carbs_g || 200,
+      target_fat_g: computed.target_fat_g || 60,
+      target_fibre_min: 25,
+      target_fibre_max: 30,
+      target_water_ml: resolvedWater,
+      preferred_workout_time: preferredWorkoutTime || null,
+      workout_location: workoutLocation || null,
+      dietary_preference: dietaryPreference || null,
       units_preference: unitsPreference,
       reminders_enabled: remindersEnabled,
       onboarding_completed: true,
+      onboarding_step: 5,
     };
 
-    // Clean up draft
     try {
-      localStorage.removeItem(DRAFT_KEY);
-    } catch {}
-
-    // Immediately trigger onComplete so SignatureWelcomeExperience handles the welcome
-    await onComplete(payload);
+      await onComplete(payload);
+      // Clean up drafts upon verified completion
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(draftKey);
+        localStorage.removeItem(DRAFT_KEY);
+      }
+    } catch (err: any) {
+      console.error('Onboarding final submission error:', err);
+      setIsFinishing(false);
+      setValidationError(err?.message || 'Unable to save onboarding profile. Please check your connection and try again.');
+      // Keep user on the current step so they can retry without losing their entered data!
+    }
   };
 
   return (
@@ -355,7 +416,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Alex Vance"
+                  placeholder="Enter your full name"
                   value={fullName}
                   onChange={(e) => {
                     setFullName(e.target.value);
@@ -374,9 +435,10 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                     type="number"
                     min={14}
                     max={100}
+                    placeholder="e.g. 24"
                     value={age}
                     onChange={(e) => {
-                      setAge(Number(e.target.value));
+                      setAge(e.target.value);
                       if (validationError) setValidationError(null);
                     }}
                     className="w-full py-2.5 px-3.5 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF]"
@@ -395,6 +457,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                     onChange={(e) => setGender(e.target.value as any)}
                     className="w-full py-2.5 px-3.5 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF]"
                   >
+                    <option value="">Select Gender (Optional)</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Prefer not to say</option>
@@ -429,9 +492,10 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   type="number"
                   min={100}
                   max={250}
+                  placeholder="e.g. 175"
                   value={heightCm}
                   onChange={(e) => {
-                    setHeightCm(Number(e.target.value));
+                    setHeightCm(e.target.value);
                     if (validationError) setValidationError(null);
                   }}
                   className="w-full py-2.5 px-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white text-center font-bold focus:outline-none focus:border-[#00D5FF]"
@@ -447,9 +511,10 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   step="0.5"
                   min={30}
                   max={300}
+                  placeholder="e.g. 70"
                   value={currentWeightKg}
                   onChange={(e) => {
-                    setCurrentWeightKg(Number(e.target.value));
+                    setCurrentWeightKg(e.target.value);
                     if (validationError) setValidationError(null);
                   }}
                   className="w-full py-2.5 px-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white text-center font-bold focus:outline-none focus:border-[#00D5FF]"
@@ -468,8 +533,9 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   step="0.5"
                   min={30}
                   max={300}
+                  placeholder="e.g. 68"
                   value={goalWeightKg}
-                  onChange={(e) => setGoalWeightKg(Number(e.target.value))}
+                  onChange={(e) => setGoalWeightKg(e.target.value)}
                   className="w-full py-2.5 px-2 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white text-center font-bold focus:outline-none focus:border-[#00D5FF]"
                 />
               </div>
@@ -482,11 +548,13 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   Calculated BMI Index
                 </span>
                 <span className="text-xs text-slate-300">
-                  Category: <strong className="text-white">{bmiCategory}</strong>
+                  Category: <strong className="text-white">{hasMetricsForCalculation ? bmiCategory : 'Enter height & weight'}</strong>
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-xl font-display font-extrabold text-white">{bmi}</span>
+                <span className="text-xl font-display font-extrabold text-white">
+                  {hasMetricsForCalculation ? bmi : '—'}
+                </span>
                 <span className="text-[10px] text-slate-400 block font-mono">kg/m²</span>
               </div>
             </div>
@@ -596,12 +664,13 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                 </span>
                 <input
                   type="number"
+                  placeholder={hasMetricsForCalculation ? String(computed.target_calories) : 'e.g. 2200'}
                   value={activeCalories}
-                  onChange={(e) => setCustomCalories(Number(e.target.value))}
-                  className="w-full bg-transparent text-xl font-display font-extrabold text-white focus:outline-none"
+                  onChange={(e) => setCustomCalories(e.target.value)}
+                  className="w-full bg-transparent text-xl font-display font-extrabold text-white focus:outline-none placeholder-white/30"
                 />
                 <span className="text-[10px] text-[#A9A1BD] font-mono block">
-                  TDEE: {computed.tdee} kcal
+                  {hasMetricsForCalculation ? `TDEE: ${computed.tdee} kcal` : 'Calculated from metrics'}
                 </span>
               </div>
 
@@ -611,12 +680,13 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                 </span>
                 <input
                   type="number"
+                  placeholder={hasMetricsForCalculation ? String(computed.target_protein_g) : 'e.g. 140'}
                   value={activeProtein}
-                  onChange={(e) => setCustomProtein(Number(e.target.value))}
-                  className="w-full bg-transparent text-xl font-display font-extrabold text-[#9B5CFF] focus:outline-none"
+                  onChange={(e) => setCustomProtein(e.target.value)}
+                  className="w-full bg-transparent text-xl font-display font-extrabold text-[#9B5CFF] focus:outline-none placeholder-[#9B5CFF]/30"
                 />
                 <span className="text-[10px] text-[#A9A1BD] font-mono block">
-                  ~2.2g per kg body weight
+                  {hasMetricsForCalculation ? '~2.2g per kg body weight' : 'Optimal protein intake'}
                 </span>
               </div>
             </div>
@@ -630,8 +700,9 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                 <input
                   type="number"
                   step="500"
+                  placeholder="e.g. 10000"
                   value={dailyStepsGoal}
-                  onChange={(e) => setDailyStepsGoal(Number(e.target.value))}
+                  onChange={(e) => setDailyStepsGoal(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#38E6A5]"
                 />
               </div>
@@ -642,13 +713,14 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                 </label>
                 <select
                   value={weeklyTrainingDays}
-                  onChange={(e) => setWeeklyTrainingDays(Number(e.target.value))}
+                  onChange={(e) => setWeeklyTrainingDays(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#38E6A5]"
                 >
-                  <option value={3}>3 Days / Week</option>
-                  <option value={4}>4 Days / Week (Recommended)</option>
-                  <option value={5}>5 Days / Week</option>
-                  <option value={6}>6 Days / Week</option>
+                  <option value="">Select Days / Week</option>
+                  <option value="3">3 Days / Week</option>
+                  <option value="4">4 Days / Week (Recommended)</option>
+                  <option value="5">5 Days / Week</option>
+                  <option value="6">6 Days / Week</option>
                 </select>
               </div>
             </div>
@@ -656,13 +728,17 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
             {/* Activity Level Selector */}
             <div>
               <label className="text-[10px] font-display font-bold text-[#A9A1BD] uppercase tracking-wider block mb-1">
-                Baseline Activity Level
+                Baseline Activity Level <span className="text-[#38E6A5]">*</span>
               </label>
               <select
                 value={activityLevel}
-                onChange={(e) => setActivityLevel(e.target.value as any)}
+                onChange={(e) => {
+                  setActivityLevel(e.target.value as any);
+                  if (validationError) setValidationError(null);
+                }}
                 className="w-full py-2.5 px-3.5 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#38E6A5]"
               >
+                <option value="">Select Baseline Activity</option>
                 <option value="sedentary">Sedentary (Desk work, low activity)</option>
                 <option value="lightly_active">Lightly Active (1-3 gym sessions / week)</option>
                 <option value="moderately_active">Moderately Active (3-5 gym sessions / week)</option>
@@ -697,6 +773,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   onChange={(e) => setWorkoutLocation(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#9B5CFF]"
                 >
+                  <option value="">Select Location (Optional)</option>
                   <option value="gym">Commercial Gym</option>
                   <option value="home">Home Gym / Dumbbells</option>
                   <option value="calisthenics">Bodyweight Calisthenics</option>
@@ -712,6 +789,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   onChange={(e) => setDietaryPreference(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#9B5CFF]"
                 >
+                  <option value="">Select Diet (Optional)</option>
                   <option value="flexible">High Protein / Flexible</option>
                   <option value="vegetarian">Vegetarian</option>
                   <option value="vegan">Vegan</option>
@@ -730,6 +808,7 @@ export function OnboardingWizard({ initialName = '', onComplete }: OnboardingWiz
                   onChange={(e) => setPreferredWorkoutTime(e.target.value)}
                   className="w-full py-2.5 px-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white focus:outline-none focus:border-[#9B5CFF]"
                 >
+                  <option value="">Select Time (Optional)</option>
                   <option value="morning">Morning (6:00 - 10:00)</option>
                   <option value="afternoon">Afternoon (12:00 - 16:00)</option>
                   <option value="evening">Evening (17:00 - 21:00)</option>

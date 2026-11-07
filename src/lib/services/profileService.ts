@@ -3,6 +3,37 @@ import { Profile } from '../types/database';
 
 const LOCAL_PROFILE_KEY = 'gymhub_user_profile_cache_v1';
 
+// Columns that physically exist in the Supabase public.profiles table
+const PROFILES_DB_COLUMNS = new Set([
+  'id',
+  'reg_no',
+  'full_name',
+  'branch',
+  'academic_year',
+  'section',
+  'phone_visible',
+  'is_admin',
+  'is_verified',
+  'created_at',
+  'updated_at',
+  'onboarding_completed',
+  'onboarding_step',
+  'fitness_goals',
+  'preferred_workout_time',
+  'workout_location',
+  'dietary_preference',
+  'units_preference',
+  'reminders_enabled',
+  'longest_streak',
+  'last_streak_date',
+  'target_protein_min',
+  'target_protein_max',
+  'target_fibre_min',
+  'target_fibre_max',
+  'weekly_training_days',
+  'target_water_ml',
+]);
+
 export function getLocalCachedProfile(): Profile | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -77,8 +108,14 @@ export async function getUserProfile(userId: string): Promise<Profile | null> {
     }
 
     if (data) {
-      saveLocalCachedProfile(data as Profile);
-      return data as Profile;
+      const cached = getLocalCachedProfile();
+      const merged: Profile = {
+        ...(cached && cached.id === userId ? cached : {}),
+        ...(data as Profile),
+        onboarding_completed: (data as any).onboarding_completed ?? false,
+      };
+      saveLocalCachedProfile(merged);
+      return merged;
     }
 
     return null;
@@ -90,39 +127,62 @@ export async function getUserProfile(userId: string): Promise<Profile | null> {
   }
 }
 
-export async function getOrCreateUserProfile(userId: string, email?: string): Promise<Profile | null> {
+export async function getOrCreateUserProfile(userId: string, fullName?: string): Promise<Profile | null> {
   if (!userId || userId === 'guest' || userId === 'demo') return null;
   const existing = await getUserProfile(userId);
   if (existing) return existing;
 
   const supabase = createClient();
   try {
-    const newProfile: Partial<Profile> = {
+    const regNo = 'GH_' + userId.replace(/[^a-zA-Z0-9]/g, '').substring(0, 10).toUpperCase();
+    const newProfile = {
       id: userId,
-      email: email || '',
-      full_name: 'Athlete',
-      fitness_goal: 'muscle_gain',
-      activity_level: 'moderately_active',
-      target_steps: 10000,
-      streak_count: 0,
-      longest_streak: 0,
+      reg_no: regNo,
+      full_name: (fullName && fullName.trim()) || 'Athlete',
+      branch: 'GENERAL',
+      academic_year: '1st Year',
+      section: 'A',
       onboarding_completed: false,
+      onboarding_step: 1,
+      fitness_goals: ['muscle_gain'],
+      longest_streak: 0,
+      target_water_ml: 3000,
+      weekly_training_days: 4,
     };
 
     const { data, error } = await supabase
       .from('profiles')
-      .insert(newProfile)
+      .upsert(newProfile, { onConflict: 'id' })
       .select()
       .maybeSingle();
 
     if (error) {
-      console.error('Error creating profile row:', error);
-      return null;
+      console.error('Error creating profile row in Supabase:', error);
+      const fallback: Profile = {
+        ...newProfile,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        email: '',
+        streak_count: 0,
+        target_steps: 10000,
+        fitness_goal: 'muscle_gain',
+        activity_level: 'moderately_active',
+      } as Profile;
+      saveLocalCachedProfile(fallback);
+      return fallback;
     }
 
     if (data) {
-      saveLocalCachedProfile(data as Profile);
-      return data as Profile;
+      const merged: Profile = {
+        ...(data as Profile),
+        email: '',
+        streak_count: 0,
+        target_steps: 10000,
+        fitness_goal: 'muscle_gain',
+        activity_level: 'moderately_active',
+      } as Profile;
+      saveLocalCachedProfile(merged);
+      return merged;
     }
     return null;
   } catch (err) {
@@ -132,7 +192,7 @@ export async function getOrCreateUserProfile(userId: string, email?: string): Pr
 }
 
 export async function updateProfile(userId: string, updates: Partial<Profile>): Promise<Profile | null> {
-  // Never overwrite existing profile information with empty values
+  // Never overwrite existing profile information with undefined or empty string values
   const cleanUpdates: Partial<Profile> = {};
   for (const [key, value] of Object.entries(updates)) {
     if (value !== undefined && value !== '') {
@@ -140,42 +200,61 @@ export async function updateProfile(userId: string, updates: Partial<Profile>): 
     }
   }
 
+  // Preserve all extended fields in local cache (including body measurements & targets)
+  const local = getLocalCachedProfile() || ({} as Profile);
+  const mergedLocal: Profile = {
+    ...local,
+    ...cleanUpdates,
+    id: userId,
+    updated_at: new Date().toISOString(),
+  } as Profile;
+  saveLocalCachedProfile(mergedLocal);
+
   if (!userId || userId === 'guest' || userId === 'demo') {
-    const local = getLocalCachedProfile() || ({} as Profile);
-    const merged = { ...local, ...cleanUpdates, updated_at: new Date().toISOString() };
-    saveLocalCachedProfile(merged as Profile);
-    return merged as Profile;
+    return mergedLocal;
   }
 
   const supabase = createClient();
   try {
+    // Only send columns that actually exist in public.profiles to prevent PostgREST PGRST204 errors
+    const dbUpdates: Record<string, any> = {
+      updated_at: new Date().toISOString(),
+    };
+    for (const [key, value] of Object.entries(cleanUpdates)) {
+      if (PROFILES_DB_COLUMNS.has(key)) {
+        dbUpdates[key] = value;
+      }
+    }
+
+    // Ensure row exists in Supabase
+    await getOrCreateUserProfile(userId, cleanUpdates.full_name);
+
     const { data, error } = await supabase
       .from('profiles')
-      .update({ ...cleanUpdates, updated_at: new Date().toISOString() })
+      .update(dbUpdates)
       .eq('id', userId)
       .select()
       .maybeSingle();
 
     if (error) {
       console.error('Error updating profile in Supabase:', error);
-      // Fallback update local cache so user experience is not blocked
-      const local = getLocalCachedProfile() || ({} as Profile);
-      const merged = { ...local, ...cleanUpdates, updated_at: new Date().toISOString() };
-      saveLocalCachedProfile(merged as Profile);
-      return merged as Profile;
+      return mergedLocal;
     }
 
     if (data) {
-      saveLocalCachedProfile(data as Profile);
-      return data as Profile;
+      const finalProfile: Profile = {
+        ...mergedLocal,
+        ...(data as Profile),
+        onboarding_completed: (data as any).onboarding_completed ?? mergedLocal.onboarding_completed,
+      };
+      saveLocalCachedProfile(finalProfile);
+      return finalProfile;
     }
-    return null;
+
+    return mergedLocal;
   } catch (err) {
     console.error('Exception updating profile:', err);
-    const local = getLocalCachedProfile() || ({} as Profile);
-    const merged = { ...local, ...cleanUpdates, updated_at: new Date().toISOString() };
-    saveLocalCachedProfile(merged as Profile);
-    return merged as Profile;
+    return mergedLocal;
   }
 }
 

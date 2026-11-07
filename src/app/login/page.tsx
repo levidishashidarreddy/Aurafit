@@ -342,7 +342,8 @@ export default function LoginPage() {
                     <input
                       type="email"
                       required
-                      placeholder="athlete@gymhub.com"
+                      autoComplete="email"
+                      placeholder="Enter your email address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full py-2.5 pl-10 pr-3 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF] transition-colors"
@@ -379,7 +380,8 @@ export default function LoginPage() {
                       <input
                         type="text"
                         required
-                        placeholder="Alex Vance"
+                        autoComplete="name"
+                        placeholder="Enter your full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="w-full py-2.5 pl-10 pr-3 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF] transition-colors"
@@ -398,7 +400,8 @@ export default function LoginPage() {
                     <input
                       type="email"
                       required
-                      placeholder="athlete@gymhub.com"
+                      autoComplete="email"
+                      placeholder="Enter your email address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full py-2.5 pl-10 pr-3 rounded-xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-[#9B5CFF] transition-colors"
@@ -428,6 +431,7 @@ export default function LoginPage() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       minLength={6}
+                      autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}

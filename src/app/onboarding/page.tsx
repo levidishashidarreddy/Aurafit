@@ -64,11 +64,16 @@ export default function OnboardingPage() {
 
     try {
       // 1. Ensure profile exists and update it in Supabase
-      await getOrCreateUserProfile(userId);
-      await updateProfile(userId, {
+      await getOrCreateUserProfile(userId, resolvedName);
+      const updated = await updateProfile(userId, {
         ...formData,
+        full_name: resolvedName,
         onboarding_completed: true,
       });
+
+      if (!updated) {
+        throw new Error('Unable to save onboarding profile. Please check your connection.');
+      }
 
       // 2. Sync to centralized targets local cache
       setLocalCachedTargets({
@@ -84,9 +89,11 @@ export default function OnboardingPage() {
         goalWeightKg: formData.goal_weight_kg,
       });
 
-      // 3. Mark first-time welcome pending for seamless UX
+      // 3. Mark first-time welcome pending for seamless UX & clear drafts
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('gymhub_first_welcome_active', 'true');
+        localStorage.removeItem(`gymhub_onboarding_draft_${userId}`);
+        localStorage.removeItem('gymhub_onboarding_draft_v2');
       }
 
       // 4. Transition into the Signature Futuristic Welcome Experience
@@ -94,13 +101,10 @@ export default function OnboardingPage() {
         name: resolvedName,
         goal: formattedGoal,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to complete onboarding save:', err);
-      // Fallback: Show welcome screen anyway so user is never stuck
-      setWelcomeData({
-        name: resolvedName,
-        goal: formattedGoal,
-      });
+      // Re-throw so wizard can display actionable error rather than looping
+      throw err;
     }
   };
 
@@ -126,6 +130,7 @@ export default function OnboardingPage() {
 
   return (
     <OnboardingWizard
+      userId={userId || undefined}
       initialName={initialName}
       onComplete={handleOnboardingComplete}
     />
